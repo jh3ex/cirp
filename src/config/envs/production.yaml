@@ -1,0 +1,69 @@
+env: production_graph
+
+env_args:
+  buffers:
+    incoming_buffer: True
+    buffer_10_20: 10
+    buffer_20_30: 10
+    buffer_30_40: 10
+    completed_buffer: True
+  machines:
+    m10_1:
+      stage: 0
+      p1: 0.9
+      p2: 1.4
+      p3: 0.5
+      p4: 2.0
+      p5: 0.01
+      buffer_up: ["incoming_buffer"]
+      buffer_down: ["buffer_10_20"]
+      MTTR_step: 50
+      MTBF_step: 100
+    m10_1:
+      stage: 0
+      p1: 0.9
+      p2: 1.4
+      p3: 0.5
+      p4: 2.0
+      p5: 0.01
+      buffer_up: ["incoming_buffer"]
+      buffer_down: ["buffer_10_20"]
+      MTTR_step: 50
+      MTBF_step: 100
+
+
+  continuing_episode: False
+  map_name: 26
+  obs_instead_of_state: False
+  obs_last_action: True
+  obs_own_health: True
+  obs_all_health: False
+  obs_all_cost: False
+  obs_own_cost: True
+  obs_timestep_number: False
+  reward_scale: True
+  reward_scale_rate: 2000
+  replay_dir: ""
+  replay_prefix: ""
+  state_last_action: True
+  state_own_cost: True
+  state_profit: True
+  state_timestep_number: False
+  seed: null
+  debug: False
+
+batch_size: 8
+test_greedy: True
+test_nepisode: 96
+test_interval: 10000
+log_interval: 10000
+runner_log_interval: 10000
+learner_log_interval: 10000
+t_max: 2050000
+n_agents: 6
+adj: [[1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1]]
