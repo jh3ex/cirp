@@ -27,6 +27,7 @@ def run(_run, _config, _log):
     # setup loggers
     logger = Logger(_log)
 
+    # Output experiment parameters in the very beginning
     _log.info("Experiment Parameters:")
     experiment_params = pprint.pformat(_config,
                                        indent=4,
@@ -34,8 +35,10 @@ def run(_run, _config, _log):
     _log.info("\n\n" + experiment_params + "\n")
 
     # configure tensorboard logger
+    # Set unique token for current experiment
     unique_token = "{}__{}".format(args.name, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     args.unique_token = unique_token
+
     if args.use_tensorboard:
         tb_logs_direc = os.path.join(dirname(dirname(abspath(__file__))), "results", "tb_logs")
         tb_exp_direc = os.path.join(tb_logs_direc, "{}").format(unique_token)
@@ -45,6 +48,7 @@ def run(_run, _config, _log):
     logger.setup_sacred(_run)
 
     # Run and train
+    # This is the main body of the experiment
     run_sequential(args=args, logger=logger)
 
     # Clean up after finishing
@@ -76,15 +80,22 @@ def evaluate_sequential(args, runner):
 def run_sequential(args, logger):
 
     # Init runner so we can get env info
+    # Send all args to runner
     runner = r_REGISTRY[args.runner](args=args, logger=logger)
 
     # Set up schemes and groups here
+    # Runner should return environment information
     env_info = runner.get_env_info()
+
+    # Number of agents
     args.n_agents = env_info["n_agents"]
+    # Number of actions
     args.n_actions = env_info["n_actions"]
+    # The shape of actions
     args.state_shape = env_info["state_shape"]
 
     # Default/Base scheme
+    # Scheme is how we organize data in the replay buffer
     scheme = {
         "state": {"vshape": env_info["state_shape"]},
         "obs": {"vshape": env_info["obs_shape"], "group": "agents"},
@@ -93,13 +104,18 @@ def run_sequential(args, logger):
         "reward": {"vshape": (1,)},
         "terminated": {"vshape": (1,), "dtype": th.uint8},
     }
+
     groups = {
         "agents": args.n_agents
     }
+
+    # This means we only preprocess actions data
     preprocess = {
         "actions": ("actions_onehot", [OneHot(out_dim=args.n_actions)])
     }
+    # We can also add preprocess on stata. obs, etc.
 
+    # Setup the replay buffer
     buffer = ReplayBuffer(scheme, groups, args.buffer_size, env_info["episode_limit"] + 1,
                           preprocess=preprocess,
                           device="cpu" if args.buffer_cpu_only else args.device)

@@ -14,7 +14,9 @@ class EpisodeBatch:
                  device="cpu"):
         self.scheme = scheme.copy()
         self.groups = groups
+        # Batch size here is the size of the buffer
         self.batch_size = batch_size
+        # max_seq_length is episode limite plus one
         self.max_seq_length = max_seq_length
         self.preprocess = {} if preprocess is None else preprocess
         self.device = device
@@ -23,55 +25,90 @@ class EpisodeBatch:
             self.data = data
         else:
             self.data = SN()
+            # What is transition data and episode data?
             self.data.transition_data = {}
             self.data.episode_data = {}
+            # If no data is provided in initialization
+            # We set up data with given scheme
             self._setup_data(self.scheme, self.groups, batch_size, max_seq_length, self.preprocess)
 
     def _setup_data(self, scheme, groups, batch_size, max_seq_length, preprocess):
         if preprocess is not None:
             for k in preprocess:
+                # k is the target of provided preprocessing method
+                # Therefore, k must be included in scheme
                 assert k in scheme
+                # Name of the new k, string
                 new_k = preprocess[k][0]
+                # The method used for preprocessing
                 transforms = preprocess[k][1]
 
+                # Vector shape and type
                 vshape = self.scheme[k]["vshape"]
                 dtype = self.scheme[k]["dtype"]
+
+                # Consult preprocessing method for shape and type
+                # after preprocessing
                 for transform in transforms:
                     vshape, dtype = transform.infer_output_info(vshape, dtype)
 
+                # We append data after preprocessing to data scheme
                 self.scheme[new_k] = {
                     "vshape": vshape,
                     "dtype": dtype
                 }
+
+                # If target data has groups, we also add groups
                 if "group" in self.scheme[k]:
                     self.scheme[new_k]["group"] = self.scheme[k]["group"]
+
+                # If target data has cosntant, we also add that
                 if "episode_const" in self.scheme[k]:
                     self.scheme[new_k]["episode_const"] = self.scheme[k]["episode_const"]
 
+        # filled is reserved, make sure it is not used
         assert "filled" not in scheme, '"filled" is a reserved key for masking.'
+
+        # Append 'filled'
         scheme.update({
             "filled": {"vshape": (1,), "dtype": th.long},
         })
 
+        # Convert data structure in scheme to self
+        # Iterate over all items in scheme
         for field_key, field_info in scheme.items():
             assert "vshape" in field_info, "Scheme must define vshape for {}".format(field_key)
+            # Get all the information in items
             vshape = field_info["vshape"]
+            # Get episode_const, if not exist, return False
             episode_const = field_info.get("episode_const", False)
             group = field_info.get("group", None)
             dtype = field_info.get("dtype", th.float32)
 
+            # Check if vshape is a integer
+            # If only an integer is given, convert it to tuple
+            # to represent a shape
             if isinstance(vshape, int):
                 vshape = (vshape,)
 
+            # set up groups
+            # this group is from scheme
             if group:
+                # If we identify group, we must find it in groups
                 assert group in groups, "Group {} must have its number of members defined in _groups_".format(group)
+                # slice data into groups
+                # * is used to join two tuples
                 shape = (groups[group], *vshape)
             else:
                 shape = vshape
 
             if episode_const:
+                # Data that would not change in one episode
                 self.data.episode_data[field_key] = th.zeros((batch_size, *shape), dtype=dtype, device=self.device)
             else:
+                # Transition data
+                # Length is max_seq_length
+                _log.info("I am here inside replay buffer")
                 self.data.transition_data[field_key] = th.zeros((batch_size, max_seq_length, *shape), dtype=dtype, device=self.device)
 
     def extend(self, scheme, groups=None):
