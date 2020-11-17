@@ -1,0 +1,163 @@
+[DEBUG 12:07:28] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=None)
+[DEBUG 12:07:28] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=None)
+[DEBUG 12:07:28] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=<valid stream>)
+[DEBUG 12:07:29] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=None)
+[DEBUG 12:07:29] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=None)
+[DEBUG 12:07:29] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=<valid stream>)
+[DEBUG 12:07:29] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=None)
+[DEBUG 12:07:29] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=None)
+[DEBUG 12:07:29] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/scratch/jh3ex/cirp, universal_newlines=False, shell=None, istream=<valid stream>)
+/scratch/jh3ex/cirp/src/main.py:79: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  config_dict = yaml.load(f)
+/scratch/jh3ex/cirp/src/main.py:49: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  config_dict = yaml.load(f)
+/scratch/jh3ex/cirp/src/main.py:57: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working
+  if isinstance(v, collections.Mapping):
+[INFO 12:07:29] root Saving to FileStorageObserver in results/sacred.
+[DEBUG 12:07:29] pymarl Using capture mode "fd"
+[INFO 12:07:29] pymarl Running command 'my_main'
+[INFO 12:07:29] pymarl Started run with ID "6"
+[DEBUG 12:07:29] pymarl Starting Heartbeat
+[DEBUG 12:07:29] my_main Started
+[INFO 12:07:29] my_main Experiment Parameters:
+[INFO 12:07:29] my_main 
+
+{   'action_selector': 'multinomial',
+    'adj': [   [   1,
+                   1,
+                   1,
+                   1,
+                   1,
+                   1],
+               [   1,
+                   1,
+                   1,
+                   1,
+                   1,
+                   1],
+               [   1,
+                   1,
+                   1,
+                   1,
+                   1,
+                   1],
+               [   1,
+                   1,
+                   1,
+                   1,
+                   1,
+                   1],
+               [   1,
+                   1,
+                   1,
+                   1,
+                   1,
+                   1],
+               [   1,
+                   1,
+                   1,
+                   1,
+                   1,
+                   1]],
+    'agent': 'trans_ppo',
+    'agent_output_type': 'pi_logits',
+    'batch_size': 8,
+    'batch_size_run': 8,
+    'buffer_cpu_only': True,
+    'buffer_size': 150,
+    'checkpoint_path': '',
+    'critic_lr': 0.0005,
+    'ent_coef': None,
+    'env': 'smart_man',
+    'env_args': {   'continuing_episode': False,
+                    'debug': False,
+                    'map_name': 26,
+                    'obs_all_cost': False,
+                    'obs_all_health': False,
+                    'obs_instead_of_state': False,
+                    'obs_last_action': True,
+                    'obs_own_cost': True,
+                    'obs_own_health': True,
+                    'obs_timestep_number': False,
+                    'replay_dir': '',
+                    'replay_prefix': '',
+                    'reward_scale': True,
+                    'reward_scale_rate': 2000,
+                    'seed': 968272931,
+                    'state_last_action': False,
+                    'state_own_cost': True,
+                    'state_profit': True,
+                    'state_timestep_number': False},
+    'epsilon_anneal_time': 100000,
+    'epsilon_finish': 0.01,
+    'epsilon_start': 0.5,
+    'evaluate': False,
+    'gamma': 0.99,
+    'grad_norm_clip': 10,
+    'hypernet_embed': 64,
+    'hypernet_layers': 2,
+    'label': 'default_label',
+    'lam': 0.95,
+    'learner': 'policy_gradient_v2',
+    'learner_log_interval': 10000,
+    'load_step': 0,
+    'local_results_path': 'results',
+    'log_interval': 10000,
+    'lr': 0.0005,
+    'mac': 'ppo_mac',
+    'mask_before_softmax': False,
+    'mixer': 'qmix',
+    'mixing_embed_dim': 32,
+    'n_agents': 6,
+    'name': 'trans_vmix_pg_a2c',
+    'obs_agent_id': True,
+    'obs_last_action': True,
+    'optim_alpha': 0.99,
+    'optim_eps': 1e-05,
+    'q_nstep': 0,
+    'repeat_id': 1,
+    'rnn_hidden_dim': 64,
+    'runner': 'parallel',
+    'runner_log_interval': 10000,
+    'save_model': True,
+    'save_model_interval': 200000,
+    'save_replay': False,
+    'seed': 968272931,
+    't_max': 2050000,
+    'target_update_interval': 200,
+    'td_lambda': 0.8,
+    'test_greedy': True,
+    'test_interval': 10000,
+    'test_nepisode': 96,
+    'use_cuda': True,
+    'use_tensorboard': False,
+    'vf_coef': 0.1}
+
+[DEBUG 12:07:30] pymarl Stopping Heartbeat
+[ERROR 12:07:30] pymarl Failed after 0:00:01!
+Traceback (most recent calls WITHOUT Sacred internals):
+  File "/scratch/jh3ex/cirp/src/main.py", line 35, in my_main
+    run(_run, config, _log)
+  File "/scratch/jh3ex/cirp/src/run.py", line 52, in run
+    run_sequential(args=args, logger=logger)
+  File "/scratch/jh3ex/cirp/src/run.py", line 121, in run_sequential
+    device="cpu" if args.buffer_cpu_only else args.device)
+  File "/scratch/jh3ex/cirp/src/components/episode_buffer.py", line 247, in __init__
+    super(ReplayBuffer, self).__init__(scheme, groups, buffer_size, max_seq_length, preprocess=preprocess, device=device)
+  File "/scratch/jh3ex/cirp/src/components/episode_buffer.py", line 33, in __init__
+    self._setup_data(self.scheme, self.groups, batch_size, max_seq_length, self.preprocess)
+  File "/scratch/jh3ex/cirp/src/components/episode_buffer.py", line 112, in _setup_data
+    self.data.transition_data[field_key] = th.zeros((batch_size, max_seq_length, *shape), dtype=dtype, device=self.device)
+TypeError: 'type' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent calls WITHOUT Sacred internals):
+  File "/opt/conda/lib/python3.7/contextlib.py", line 130, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/opt/conda/lib/python3.7/subprocess.py", line 990, in wait
+    return self._wait(timeout=timeout)
+  File "/opt/conda/lib/python3.7/subprocess.py", line 1616, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['tee', '-a', '/tmp/tmp3sct9vyh']' timed out after 1 seconds
+

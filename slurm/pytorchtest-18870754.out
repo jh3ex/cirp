@@ -1,0 +1,3 @@
+{'state_shape': <class 'NotImplementedError'>, 'obs_shape': 55, 'n_actions': 729, 'n_agents': 1, 'episode_limit': 128}
+{'state': {'vshape': <class 'NotImplementedError'>}, 'obs': {'vshape': 55, 'group': 'agents'}, 'actions': {'vshape': (1,), 'group': 'agents', 'dtype': torch.int64}, 'avail_actions': {'vshape': (729,), 'group': 'agents', 'dtype': torch.int32}, 'reward': {'vshape': (1,)}, 'terminated': {'vshape': (1,), 'dtype': torch.uint8}}
+<class 'NotImplementedError'>

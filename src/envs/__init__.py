@@ -1,6 +1,8 @@
 from functools import partial
-from smac.env import MultiAgentEnv, StarCraft2Env
-from envs.smart_man_sim.smart_man import SmartEnv
+# from smac.env import MultiAgentEnv, StarCraft2Env
+from envs.multiagentenv import MultiAgentEnv
+# from envs.smart_man_sim.smart_man import SmartEnv
+from envs.smart_man_sim.smart_man_flat import SmartEnv
 import sys
 import os
 
@@ -11,7 +13,7 @@ def env_fn(env, **kwargs) -> MultiAgentEnv:
     return env(**kwargs)
 
 REGISTRY = {}
-REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
+# REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
 REGISTRY["smart_man"] = partial(env_fn, env=SmartEnv)
 REGISTRY["smart_man_flat"] = partial(env_fn, env=SmartEnv)
 #TODO I need to register my environment here
