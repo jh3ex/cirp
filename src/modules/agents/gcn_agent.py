@@ -159,7 +159,7 @@ class GATAgent(nn.Module):
         q = self.fc1(h)
         return q, h
 
-
+# REGISTRY["transformer"] = TRANSAgent
 class TRANSAgent(nn.Module):
     """
     Transformer network
@@ -212,7 +212,9 @@ class TRANSAgent(nn.Module):
         q = self.fc3(h)
         return q, h
 
-
+# REGISTRY["trans_ppo"] = TRANSPPOAgent
+# These agents are nothing more than a neural network
+# This trans_ppo agent is the one we need to use in CCOMA
 class TRANSPPOAgent(nn.Module):
     """
     Transformer network
@@ -220,22 +222,29 @@ class TRANSPPOAgent(nn.Module):
     def __init__(self, input_shape, args):
         super(TRANSPPOAgent, self).__init__()
         self.args = args
+        # Adjacency matrix
         self.adj = torch.tensor(args.adj, dtype=torch.float32, device=args.device)
         num_blocks = args.num_blocks
         self.bias = -1e9 * (1.0 - self.adj)
         self.residue = args.residue
 
+        # Fully connected layer 1
         self.fc1 = nn.Linear(input_shape, args.rnn_hidden_dim)
         self.blocks = []
         for i in range(num_blocks):
+            # Adding attention
             if args.device == 'cuda':
                 self.blocks.append(Attention(args.rnn_hidden_dim, args.n_head, args).cuda())
             else:
                 self.blocks.append(Attention(args.rnn_hidden_dim, args.n_head, args))
+        # Add layernorm (previously defined)
         self.ln = LayerNorm(args.rnn_hidden_dim)
+        # Use GRU cell to construct RNN
         self.rnn = nn.GRUCell(args.rnn_hidden_dim, args.rnn_hidden_dim)
         self.fc2 = nn.Linear(2 * args.rnn_hidden_dim, args.rnn_hidden_dim)
+        # Output policy
         self.fc3 = nn.Linear(args.rnn_hidden_dim, args.n_actions)
+
         self.fc4 = nn.Linear(args.rnn_hidden_dim, 1)
 
     def init_hidden(self):
@@ -245,6 +254,12 @@ class TRANSPPOAgent(nn.Module):
     def forward(self, inputs, hidden_state):
         # x shape is [batch_size * n_agents, input_shape]
         # encode raw data into feature tensors
+        """
+        PyTorch allows a tensor to be a View of an existing tensor.
+        View tensor shares the same underlying data with its base tensor.
+        Supporting View avoids explicit data copy, thus allows us to do
+        fast and memory efficient reshaping, slicing and element-wise operations.
+        """
         inputs = inputs.view(self.args.batch_size, self.args.n_agents, -1)
         x = F.relu(self.fc1(inputs))
         # x = self.fc1(inputs)

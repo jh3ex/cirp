@@ -108,7 +108,7 @@ class EpisodeBatch:
             else:
                 # Transition data
                 # Length is max_seq_length
-                print(shape)
+
                 self.data.transition_data[field_key] = th.zeros((batch_size, max_seq_length, *shape), dtype=dtype, device=self.device)
 
     def extend(self, scheme, groups=None):

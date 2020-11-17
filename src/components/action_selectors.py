@@ -6,7 +6,7 @@ REGISTRY = {}
 
 
 class MultinomialActionSelector():
-
+    # Pick action according to parameterized policy
     def __init__(self, args):
         self.args = args
 
@@ -19,11 +19,14 @@ class MultinomialActionSelector():
         masked_policies = agent_inputs.clone()
         masked_policies[avail_actions == 0.0] = 0.0
 
+        # For parameterized policy, we don't need epsilon
         self.epsilon = self.schedule.eval(t_env)
 
         if test_mode and self.test_greedy:
+            # In greedy test, we take the action that has largest probability
             picked_actions = masked_policies.max(dim=2)[1]
         else:
+            # If not greedy, sample from multinomial distirbution pi
             picked_actions = Categorical(masked_policies).sample().long()
 
         return picked_actions
@@ -33,7 +36,7 @@ REGISTRY["multinomial"] = MultinomialActionSelector
 
 
 class EpsilonGreedyActionSelector():
-
+    # Pick action according to Q value
     def __init__(self, args):
         self.args = args
 
