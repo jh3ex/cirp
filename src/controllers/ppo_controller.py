@@ -8,12 +8,16 @@ class PPOMAC:
     def __init__(self, scheme, groups, args):
         self.n_agents = args.n_agents
         self.args = args
+        # Get input shape depending on the args
         input_shape = self._get_input_shape(scheme)
+        # Build the agent using the input shape
         self._build_agents(input_shape)
+
         self.agent_output_type = args.agent_output_type
 
         self.action_selector = action_REGISTRY[args.action_selector](args)
 
+        # The initial hidden state is None
         self.hidden_states = None
 
     def select_actions(self, ep_batch, t_ep, t_env, bs=slice(None), test_mode=False):
@@ -24,8 +28,11 @@ class PPOMAC:
         return chosen_actions
 
     def forward(self, ep_batch, t, test_mode=False):
+        # Build inputs to agent given raw batch data
         agent_inputs = self._build_inputs(ep_batch, t)
+        # Available actions is also from the raw batch data
         avail_actions = ep_batch["avail_actions"][:, t]
+        # Get ouput from agent
         agent_outs, agent_outs1, self.hidden_states = self.agent(agent_inputs, self.hidden_states)
 
         # Softmax the agent outputs if they're policy logits
@@ -72,6 +79,7 @@ class PPOMAC:
         self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage))
 
     def _build_agents(self, input_shape):
+        # Build agents
         self.agent = agent_REGISTRY[self.args.agent](input_shape, self.args)
 
     def _build_inputs(self, batch, t):
@@ -93,9 +101,12 @@ class PPOMAC:
 
     def _get_input_shape(self, scheme):
         input_shape = scheme["obs"]["vshape"]
+        # input_shape to the agent is not necessarily the observation dimension
         if self.args.obs_last_action:
+            # If we need to add last action
             input_shape += scheme["actions_onehot"]["vshape"][0]
         if self.args.obs_agent_id:
+            # If we need to add agent id
             input_shape += self.n_agents
 
         return input_shape

@@ -178,7 +178,10 @@ def run_sequential(args, logger):
 
     while runner.t_env <= args.t_max:
 
-        # Run for a whole episode at a time
+        """
+        RUNNING occurs here
+        """
+        # Run for **a whole episode** at a time
         episode_batch = runner.run(test_mode=False)
         buffer.insert_episode_batch(episode_batch)
 
@@ -192,6 +195,9 @@ def run_sequential(args, logger):
             if episode_sample.device != args.device:
                 episode_sample.to(args.device)
 
+            """
+            TRAINING occurs here
+            """
             learner.train(episode_sample, runner.t_env, episode)
 
         # Execute test runs once in a while
