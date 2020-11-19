@@ -27,6 +27,11 @@ class CompletedBuffer(Buffer):
 			self.final_yield += 1
 		return True
 
+	def level(self):
+		return 0
+
+	def vacancy(self):
+		return 1
 
 	def output_and_yield(self):
 		return self.output, self.final_yield
@@ -47,8 +52,3 @@ class CompletedBuffer(Buffer):
 
 		"""
 		pass
-
-
-
-
-

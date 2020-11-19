@@ -8,16 +8,18 @@ Created on Mon Sep 21 06:51:18 2020
 
 
 class Machine:
-	def __init__(self, features, stage, buffer_up, buffer_down):
+	def __init__(self, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
 
 		# Initial machine status
 		self.features = features
-
+		self.name = name
 
 		self.stage = stage
 
 		self.buffer_up = buffer_up
 		self.buffer_down = buffer_down
+
+		self.n_product_feature = n_product_feature
 
 		return
 
@@ -30,24 +32,6 @@ class Machine:
 		self.remaining_time = 0
 		self.status = "to load"
 
-
-
-# 	def is_ready_to_release(self):
-# 		# True if current product is completed
-# 		return (self.remaining_time <= 0) and (not self.is_ready_to_load())
-
-
-# 	def is_processing(self):
-# 		return self.remaining_time > 0
-
-
-# 	def is_ready_to_load(self):
-# 		# True if machine is available for taking new product
-# 		return not self.current_product
-
-# 	def is_ready_to_process(self):
-# 		return self.ready_to_process
-# 		# return self.remaining_time <= 0 and self.current_product
 
 	def quote(self):
 		"""
@@ -91,7 +75,7 @@ class Machine:
 		self.remaining_time = processing_time
 
 		self.status = "processing"
-		pass
+
 
 	def processing(self, time_elapsed):
 
@@ -121,8 +105,10 @@ class Machine:
 
 		return released_product
 
+	def need_decision(self):
+		return self.status == "awaiting parameter"
 
-	def node_feature(self):
+	def get_node_feature(self):
 		b_up, b_down = 0, 0
 
 		for b in self.buffer_up:
@@ -131,8 +117,15 @@ class Machine:
 		for b in self.buffer_down:
 			b_down += b.vacancy()
 
-		return [b_up, b_down, self.remaining_time, self.current_product.feature], self.is_ready_to_process()
+		if self.current_product is not None:
+			product_feature = self.current_product.feature.tolist()
+		else:
+			product_feature = [0.0] * self.n_product_feature
 
+		return [self.stage, b_up, b_down, self.remaining_time] + product_feature, self.need_decision()
+
+	def get_feature_size(self):
+		return 4
 
 	def process_model(self, existing_feature, process_param):
 		# Define the process
@@ -143,8 +136,3 @@ class Machine:
 
 	def tool_check(self):
 		pass
-
-
-
-
-

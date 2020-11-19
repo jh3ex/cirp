@@ -10,8 +10,8 @@ from Machine import Machine
 import numpy as np
 
 class Grinding(Machine):
-	def __init__(self, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down):
-		super().__init__(features, stage, buffer_up, buffer_down)
+	def __init__(self, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+		super().__init__(features, stage, buffer_up, buffer_down, n_product_feature, name)
 		self.p1 = p1
 		self.p2 = p2
 		self.p3 = p3
@@ -34,6 +34,3 @@ class Grinding(Machine):
 		processing_time = self.p5 / (v*a)
 
 		return processing_time, existing_feature
-
-
-

@@ -20,11 +20,12 @@ class IncomingBuffer(Buffer):
 	def initialize(self):
 		self.n_fed = 0
 
+	def level(self):
+		return 1
+
 	def take(self):
 		self.n_fed += 1
 
 		new_product = copy.deepcopy(self.template_product)
 		new_product.index = self.n_fed
 		return new_product
-
-

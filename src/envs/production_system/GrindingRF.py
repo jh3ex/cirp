@@ -14,8 +14,8 @@ import numpy as np
 # Condider random failure
 
 class GrindingRF(Grinding):
-	def __init__(self, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, MTTR_step, MTBF_step):
-		super().__init__(p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down)
+	def __init__(self, MTTR_step, MTBF_step, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+		super().__init__(p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name)
 
 		self.MTTR_step = MTTR_step
 		self.MTBF_step = MTBF_step
@@ -40,17 +40,15 @@ class GrindingRF(Grinding):
 
 		return self.remaining_time
 
-	def node_feature(self):
-		b_up, b_down = 0, 0
+	def get_node_feature(self):
+		node_feature, need_decision = Grinding.get_node_feature(self)
 
-		for b in self.buffer_up:
-			b_up += b.level()
+		node_feature.append(self.w)
 
-		for b in self.buffer_down:
-			b_down += b.vacancy()
+		return node_feature, need_decision
 
-		return [b_up, b_down, self.remaining_time, self.current_product.feature, self.w], self.is_ready_to_process()
-
+	def get_feature_size(self):
+		return 5
 
 	def tool_check(self):
 		if self.w == 0 and self.RD.rand() < 1 / self.MTBF_step:
@@ -61,6 +59,3 @@ class GrindingRF(Grinding):
 		if self.w == 1 and self.RD.rand() < 1 / self.MTTR_step:
 			self.w = 0
 			return
-
-
-
