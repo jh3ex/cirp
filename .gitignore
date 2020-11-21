@@ -1,2 +1,4 @@
 /results/*
 /slurm/results/*
+/slurm/*.err
+/slurm/*.out

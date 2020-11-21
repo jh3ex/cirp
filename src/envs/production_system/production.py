@@ -94,11 +94,22 @@ class production_discrete(MultiAgentEnv):
 
 
         return
-
+    
+    def _action_check(self, actions):
+        avail_actions = self.get_avail_actions()
+        
+        for idx, a in enumerate(actions):
+            assert avail_actions[idx][a] == 1, "At time [{}], agent {} is given an infeasible action {}".format(self.time, idx, a)
+        
+    
+    
     def step(self, actions):
         """ Returns reward, terminated, info """
         # raise NotImplementedError
         # Get the output and yield before this step
+        
+        self._action_check(actions)
+        
         self.steps += 1
 
         output_before, yield_before = self.buffers["completed_buffer"].output_and_yield()
@@ -133,7 +144,6 @@ class production_discrete(MultiAgentEnv):
                             decision_time = True
                             break
                 elif status == "awaiting parameter":
-                    # parameters = self.action_to_param[actions[idx].index(1)]
                     parameters = self.action_to_param[actions[idx]]
                     m.set_process_parameter(parameters)
 
@@ -249,10 +259,17 @@ class production_discrete(MultiAgentEnv):
         """ Returns the available actions for agent_id """
         # raise NotImplementedError
         obs, need_decision = self.machines[agent_id].get_node_feature()
+        
+        # assert not need_decision, "At time {}, agent {} needs decision".format(self.time, agent_id)
+        
         if need_decision:
-            return [0] + [1] * (self.n_actions - 1)
+            
+            avail_agent_actions = [0] + [1] * (self.n_actions - 1)
         else:
-            return [1] + [0] * (self.n_actions - 1)
+            avail_agent_actions = [1] + [0] * (self.n_actions - 1)
+            
+        
+        return avail_agent_actions
 
 
     def get_total_actions(self):
@@ -318,26 +335,26 @@ class production_discrete(MultiAgentEnv):
         return env_info
 
 
-if __name__ == "__main__":
-    from types import SimpleNamespace as SN
-    import yaml
-    import numpy as np
-
-    with open('D:/OneDrive/Script/graph/pymarl_adaptive_graph/src/config/envs/production.yaml', 'r') as f:
-        _config = yaml.load(f)
-    env_config = _config['env_args']
-    env = production_discrete(**env_config)
-    env.reset()
-    terminated = False
-
-    while not terminated:
-        rand_action = np.random.rand(env.n_agents, env.n_actions)
-        print('At time [{}], available actions are {}'.format(env.time, env.get_avail_actions()))
-        print("state is {}".format(env.get_state()))
-        logits = rand_action * np.array(env.get_avail_actions())
-        p = logits / np.sum(logits, axis=1, keepdims=True)
-        rand_action = np.argmax(p, axis=1)
-        r, terminated, info = env.step(rand_action)
-        print(r)
-    print(info)
-    print(env.get_env_info())
+#if __name__ == "__main__":
+#    from types import SimpleNamespace as SN
+#    import yaml
+#    import numpy as np
+#
+#    with open('D:/OneDrive/Script/graph/pymarl_adaptive_graph/src/config/envs/production.yaml', 'r') as f:
+#        _config = yaml.load(f)
+#    env_config = _config['env_args']
+#    env = production_discrete(**env_config)
+#    env.reset()
+#    terminated = False
+#
+#    while not terminated:
+#        rand_action = np.random.rand(env.n_agents, env.n_actions)
+#        print('At time [{}], available actions are {}'.format(env.time, env.get_avail_actions()))
+#        print("state is {}".format(env.get_state()))
+#        logits = rand_action * np.array(env.get_avail_actions())
+#        p = logits / np.sum(logits, axis=1, keepdims=True)
+#        rand_action = np.argmax(p, axis=1)
+#        r, terminated, info = env.step(rand_action)
+#        print(r)
+#    print(info)
+#    print(env.get_env_info())

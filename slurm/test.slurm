@@ -3,9 +3,9 @@
 #SBATCH -o pytorchtest-%A.out
 #SBATCH -e pytorchtest-%A.err
 #SBATCH -p gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 #SBATCH -c 1
-#SBATCH -t 01:00:00
+#SBATCH -t 15:00:00
 #SBATCH -A isl_uva
 
 module purge
