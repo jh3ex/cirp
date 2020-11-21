@@ -32,10 +32,13 @@ class GrindingRF(Grinding):
 
 		assert self.status == "processing", "There is not product being processed"
 
+		# Update machine status (up/down)
+		self.tool_check()
 		# Process product
 		self.remaining_time -= time_elapsed * (1 - self.w)
 
 		if self.remaining_time <= 0:
+			self.remaining_time = 0.0
 			self.status = "to release"
 
 		return self.remaining_time
@@ -43,7 +46,8 @@ class GrindingRF(Grinding):
 	def get_node_feature(self):
 		node_feature, need_decision = Grinding.get_node_feature(self)
 
-		node_feature.append(self.w)
+		# Append machine random failure status
+		node_feature["w"] = self.w
 
 		return node_feature, need_decision
 

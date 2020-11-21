@@ -42,10 +42,10 @@ class Buffer:
 		return not self.content
 
 	def level(self):
-		return len(self.content) / self.cap
+		return len(self.content)
 
 	def vacancy(self):
-		return (self.cap - self.level()) / self.cap
+		return self.cap - self.level()
 
 	def __is_full(self):
 		return self.level() == self.cap

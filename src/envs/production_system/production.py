@@ -30,7 +30,7 @@ class production_discrete(MultiAgentEnv):
         self.defect_reward = self.args["defect_reward"]
 
         self.template_product = Product(n_feature=self.args["n_feature"],
-                                        n_process=self.args["n_process"],
+                                        n_process=self.args["n_stage"],
                                         index=0)
 
         self._build_buffers()
@@ -76,11 +76,12 @@ class production_discrete(MultiAgentEnv):
 
         for idx, name in enumerate(self.args["machines"]):
             m = self.args["machines"][name]
+
             self.machines.append(GrindingRF(p1=m["p1"],
                                             p2=m["p2"],
                                             p3=m["p3"],
                                             p4=m["p4"],
-                                            p5=m["p5"],
+                                            p5=m["p5"] * self.args["p5_scale"],
                                             features=None,
                                             stage=m["stage"],
                                             buffer_up=[self.buffers[x] for x in m["buffer_up"]],
@@ -142,6 +143,8 @@ class production_discrete(MultiAgentEnv):
         defect_step = output_step - yield_step
 
         reward = self.yield_reward * yield_step + self.defect_reward * defect_step
+        if self.args["reward_scale"]:
+            reward *= self.args["reward_scale_rate"]
         # self.episode_return += reward
         terminated = (self.steps >= self.episode_limit)
         # terminated = (self.time >= self.args["sim_duration"])
@@ -149,8 +152,9 @@ class production_discrete(MultiAgentEnv):
         if terminated:
             info["output"] = self.output
             info["yields"] = self.yields
+            info["duration"] = self.time
             # info["reward"] = self.episode_return
-            
+
 
 
         return reward, terminated, info
@@ -167,14 +171,30 @@ class production_discrete(MultiAgentEnv):
     def get_obs_agent(self, agent_id):
         """ Returns observation for agent_id """
         # raise NotImplementedError
-        obs, need_decision = self.machines[agent_id].get_node_feature()
+        obs = []
+        node_feature, need_decision = self.machines[agent_id].get_node_feature()
+
+        stage_one_hot = [0] * self.args["n_stage"]
+        stage_one_hot[node_feature["stage"]] = 1
+        node_feature["stage"] = stage_one_hot
+
+        for key, value in node_feature.items():
+            scale = self.args["obs_scale"].get(key, 1)
+            if isinstance(value, list):
+                obs += [v * scale for v in value]
+            else:
+                obs.append(value * scale)
+
         if need_decision:
-            obs.append(1.0)
+            obs.append(1)
         else:
-            obs.append(0.0)
+            obs.append(0)
 
         if self.args["obs_last_action"]:
             obs += self.last_action[agent_id]
+
+        if self.args["obs_agent_id"]:
+            obs.append(agent_id / self.n_agents)
 
         return np.array(obs, dtype=np.float32)
 
@@ -183,13 +203,19 @@ class production_discrete(MultiAgentEnv):
         """ Returns the shape of the observation """
         # raise NotImplementedError
         # Features from machine
-        size = self.machines[0].get_feature_size()
+        size = self.machines[0].get_feature_size() + self.args["n_stage"] - 1
+
+        # Stage is one-hot after processing
+
         # Features
         size += self.template_product.n_feature
-        size += 1  # Include agent id
+        size += 1  # Include decision or not
 
         if self.args["obs_last_action"]:
             size += self.n_actions
+
+        if self.args["obs_agent_id"]:
+            size += 1
 
         return size
 
@@ -246,7 +272,7 @@ class production_discrete(MultiAgentEnv):
         self.steps = 0
         self.time = 0.0
         # self.episode_return = 0.0
-        
+
         self.output, self.yields = 0, 0
         self.last_action = [[0] * self.n_actions] * self.n_agents
 
@@ -259,14 +285,15 @@ class production_discrete(MultiAgentEnv):
 
         # self.incoming_buffer.initialize()
         # self.completed_buffer.initialize()
-        
+
     def get_stats(self):
         # Add per warning during running
         self.stats = {"output": self.output,
-                      "yields": self.yields}
-        
+                      "yields": self.yields,
+                      "duration": self.time}
+
         return self.stats
-        
+
 
 
     def render(self):

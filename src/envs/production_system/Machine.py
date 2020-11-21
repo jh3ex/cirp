@@ -85,7 +85,7 @@ class Machine:
 		self.remaining_time -= time_elapsed
 
 		if self.remaining_time <= 0:
-			self.remaining_time = 0
+			self.remaining_time = 0.0
 			self.status = "to release"
 
 		return self.remaining_time
@@ -123,7 +123,14 @@ class Machine:
 		else:
 			product_feature = [0.0] * self.n_product_feature
 
-		return [self.stage, b_up, b_down, self.remaining_time] + product_feature, self.need_decision()
+		node_feature = {"stage": self.stage,
+						"b_up": b_up,
+						"b_down": b_down,
+						"remaining_time": self.remaining_time,
+						"product_feature": product_feature}
+
+
+		return node_feature, self.need_decision()
 
 	def get_feature_size(self):
 		return 4
