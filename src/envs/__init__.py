@@ -18,7 +18,7 @@ REGISTRY = {}
 # REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
 REGISTRY["smart_man"] = partial(env_fn, env=SmartEnv)
 REGISTRY["smart_man_flat"] = partial(env_fn, env=SmartEnv)
-REGISTRY["grinding_discrete"] = partial(env_fn, env=production_discrete)
+REGISTRY["production_discrete"] = partial(env_fn, env=production_discrete)
 
 #TODO I need to register my environment here
 # REGISTRY["sman"] = partial(env_fn, env=StarCraft2Env)

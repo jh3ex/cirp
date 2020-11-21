@@ -18,7 +18,7 @@ env_args:
       p2: 1.4
       p3: 0.5
       p4: 2.0
-      p5: 0.01
+      p5: 0.0001
       buffer_up: ["incoming_buffer"]
       buffer_down: ["buffer_10_20"]
       MTTR_step: 50
@@ -29,7 +29,7 @@ env_args:
       p2: 1.4
       p3: 0.5
       p4: 2.0
-      p5: 0.01
+      p5: 0.0001
       buffer_up: ["buffer_10_20"]
       buffer_down: ["buffer_20_30"]
       MTTR_step: 50
@@ -40,7 +40,7 @@ env_args:
       p2: 1.4
       p3: 0.5
       p4: 2.0
-      p5: 0.01
+      p5: 0.0001
       buffer_up: ["buffer_20_30"]
       buffer_down: ["buffer_30_40"]
       MTTR_step: 50
@@ -51,7 +51,7 @@ env_args:
       p2: 1.4
       p3: 0.5
       p4: 2.0
-      p5: 0.01
+      p5: 0.0001
       buffer_up: ["buffer_30_40"]
       buffer_down: ["completed_buffer"]
       MTTR_step: 50
@@ -62,43 +62,44 @@ env_args:
       p2: 1.4
       p3: 0.5
       p4: 2.0
-      p5: 0.01
+      p5: 0.0001
       buffer_up: ["buffer_30_40"]
       buffer_down: ["completed_buffer"]
       MTTR_step: 50
       MTBF_step: 100
 
   sim_duration: 100000
-  q_star: 0.000004
+  q_star: 0.00004
   yield_reward: 1
   defect_reward: -0.1
   actions:
     v: [0.3, 0.4, 0.5]
-    w: [28, 30.5, 33]
+    w: [28.0, 30.5, 33.0]
     a: [0.000012, 0.000015, 0.000018]
 
 
-  stepsize: 100
+  stepsize: 10
   continuing_episode: False
   episode_limit: 1000
+  # sim_duration: 1000000
   # map_name: 26
   obs_instead_of_state: True
   obs_last_action: True
   # obs_own_health: True
   # obs_all_health: False
-  obs_all_cost: False
-  obs_own_cost: True
-  obs_timestep_number: False
-  reward_scale: True
-  reward_scale_rate: 2000
-  replay_dir: ""
-  replay_prefix: ""
-  state_last_action: True
-  state_own_cost: True
-  state_profit: True
-  state_timestep_number: False
+  # obs_all_cost: False
+  # obs_own_cost: True
+  # obs_timestep_number: False
+  # reward_scale: False
+  # reward_scale_rate: 1
+  # replay_dir: ""
+  # replay_prefix: ""
+  # state_last_action: False
+  # state_own_cost: True
+  # state_profit: True
+  # state_timestep_number: False
   seed: 1234
-  debug: False
+  # debug: False
 
 batch_size: 8
 test_greedy: True
@@ -107,10 +108,10 @@ test_interval: 10000
 log_interval: 10000
 runner_log_interval: 10000
 learner_log_interval: 10000
-t_max: 2050000
+t_max: 2000000  # total training episodes
 n_agents: 5
-adj: [[1, 1, 0, 0, 0],
-      [1, 1, 1, 0, 0],
-      [0, 1, 1, 1, 1],
-      [0, 0, 1, 1, 0],
-      [0, 0, 1, 0, 1]]
+# adj: [[1, 1, 0, 0, 0],
+#       [1, 1, 1, 0, 0],
+#       [0, 1, 1, 1, 1],
+#       [0, 0, 1, 1, 0],
+#       [0, 0, 1, 0, 1]]

@@ -119,7 +119,10 @@ class ParallelRunner:
 
         # Collects the thread indexes that are not terminated
         envs_not_terminated = [b_idx for b_idx, termed in enumerate(terminated) if not termed]
+        
         final_env_infos = []  # may store extra stats like battle won. this is filled in ORDER OF TERMINATION
+        
+        # Start running here
 
         while True:
 
@@ -127,6 +130,9 @@ class ParallelRunner:
             # Receive the actions for each agent at this timestep in a batch for each un-terminated env
             # The 'mac' is a multi-agent controller
             # given state information, it will return actions
+            # self.t_env is the episode number
+            # self.t is the step in current episode
+            
             actions = self.mac.select_actions(self.batch, t_ep=self.t, t_env=self.t_env, bs=envs_not_terminated, test_mode=test_mode)
             cpu_actions = actions.to("cpu").numpy()
 
@@ -195,6 +201,8 @@ class ParallelRunner:
             self.t += 1
 
             # Add the pre-transition data
+            # pre_transition_data: a dictionary, contains key: state, avail_action, and obs
+            # bs: envs_not_terminated
             self.batch.update(pre_transition_data, bs=envs_not_terminated, ts=self.t, mark_filled=True)
 
         if not test_mode:
@@ -221,13 +229,14 @@ class ParallelRunner:
 
         n_test_runs = max(1, self.args.test_nepisode // self.batch_size) * self.batch_size
         if test_mode and (len(self.test_returns) == n_test_runs):
-            cur_profit = cur_stats['profit'] / cur_stats['n_episodes']
-            print(cur_profit)
-            if self.t_env > 1500000:
-                # cur_profit = cur_stats['profit'] / cur_stats['n_episodes']
-                if cur_profit > self.best_performance:
-                    self.save_model = True
-                    self.best_performance = cur_profit
+            # Comment by Jing Huang on 11/19/2020
+#            cur_profit = cur_stats['profit'] / cur_stats['n_episodes']
+#            print(cur_profit)
+#            if self.t_env > 1500000:
+#                # cur_profit = cur_stats['profit'] / cur_stats['n_episodes']
+#                if cur_profit > self.best_performance:
+#                    self.save_model = True
+#                    self.best_performance = cur_profit
             self._log(cur_returns, cur_stats, log_prefix)
         elif self.t_env - self.log_train_stats_t >= self.args.runner_log_interval:
             self._log(cur_returns, cur_stats, log_prefix)

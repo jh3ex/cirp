@@ -85,6 +85,7 @@ class Machine:
 		self.remaining_time -= time_elapsed
 
 		if self.remaining_time <= 0:
+			self.remaining_time = 0
 			self.status = "to release"
 
 		return self.remaining_time

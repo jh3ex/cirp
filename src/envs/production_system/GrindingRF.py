@@ -8,7 +8,7 @@ Grinding machine considering random failures
 """
 
 
-from Grinding import Grinding
+from envs.production_system.Grinding import Grinding
 import numpy as np
 
 # Condider random failure

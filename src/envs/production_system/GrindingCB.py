@@ -5,7 +5,7 @@ Created on Sun Oct 25 14:48:12 2020
 @author: jingh
 """
 
-from CompletedBuffer import CompletedBuffer
+from envs.production_system.CompletedBuffer import CompletedBuffer
 
 
 class GrindingCB(CompletedBuffer):

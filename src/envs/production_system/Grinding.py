@@ -6,7 +6,7 @@ Created on Sun Oct 25 13:34:34 2020
 """
 
 
-from Machine import Machine
+from envs.production_system.Machine import Machine
 import numpy as np
 
 class Grinding(Machine):

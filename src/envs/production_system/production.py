@@ -5,11 +5,12 @@ In this environment, actions are discrete.
 @author: jingh
 """
 from envs.multiagentenv import MultiAgentEnv
-from Buffer import Buffer
-from GrindingRF import GrindingRF
-from GrindingCB import GrindingCB
-from Product import Product
-from IncomingBuffer import IncomingBuffer
+from envs.production_system.Buffer import Buffer
+from envs.production_system.GrindingRF import GrindingRF
+from envs.production_system.GrindingCB import GrindingCB
+from envs.production_system.Product import Product
+from envs.production_system.IncomingBuffer import IncomingBuffer
+import numpy as np
 
 
 class production_discrete(MultiAgentEnv):
@@ -126,7 +127,7 @@ class production_discrete(MultiAgentEnv):
                     for b in m.buffer_up:
                         product = b.take()
                         if product is not None:
-                            existing_feature = m.load(product)
+                            # existing_feature = m.load(product)
                             # parameter_request[idx] = existing_feature
                             decision_time = True
                             break
@@ -135,19 +136,21 @@ class production_discrete(MultiAgentEnv):
                     parameters = self.action_to_param[actions[idx]]
                     m.set_process_parameter(parameters)
 
-        output_after, yield_after = self.buffers["completed_buffer"].output_and_yield()
-        output_step = output_after - output_before
-        yield_step = yield_after - yield_before
+        self.output, self.yields = self.buffers["completed_buffer"].output_and_yield()
+        output_step = self.output - output_before
+        yield_step = self.yields - yield_before
         defect_step = output_step - yield_step
 
         reward = self.yield_reward * yield_step + self.defect_reward * defect_step
-        self.episode_return += reward
+        # self.episode_return += reward
         terminated = (self.steps >= self.episode_limit)
+        # terminated = (self.time >= self.args["sim_duration"])
         info = {}
         if terminated:
-            info["output"] = output_after
-            info["yield"] = yield_after
-            info["reward"] = self.episode_return
+            info["output"] = self.output
+            info["yields"] = self.yields
+            # info["reward"] = self.episode_return
+            
 
 
         return reward, terminated, info
@@ -173,7 +176,7 @@ class production_discrete(MultiAgentEnv):
         if self.args["obs_last_action"]:
             obs += self.last_action[agent_id]
 
-        return obs
+        return np.array(obs, dtype=np.float32)
 
 
     def get_obs_size(self):
@@ -242,8 +245,9 @@ class production_discrete(MultiAgentEnv):
         self.stepsize = self.args["stepsize"]
         self.steps = 0
         self.time = 0.0
-        self.episode_return = 0.0
-
+        # self.episode_return = 0.0
+        
+        self.output, self.yields = 0, 0
         self.last_action = [[0] * self.n_actions] * self.n_agents
 
         # Initialize everthing
@@ -255,14 +259,22 @@ class production_discrete(MultiAgentEnv):
 
         # self.incoming_buffer.initialize()
         # self.completed_buffer.initialize()
-
+        
+    def get_stats(self):
+        # Add per warning during running
+        self.stats = {"output": self.output,
+                      "yields": self.yields}
+        
+        return self.stats
+        
 
 
     def render(self):
         raise NotImplementedError
 
     def close(self):
-        raise NotImplementedError
+        # raise NotImplementedError
+        pass
 
     def seed(self):
         raise NotImplementedError

@@ -8,7 +8,7 @@ Created on Sat Oct 24 20:46:13 2020
 import numpy as np
 import copy
 
-from Buffer import Buffer
+from envs.production_system.Buffer import Buffer
 
 class IncomingBuffer(Buffer):
 

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def load_json(folder_name):
-    with open(os.path.join("./results", "sacred", str(folder_name), "info.json")) as f:
+    with open(os.path.join("../results", "sacred", str(folder_name), "info.json")) as f:
         data = json.load(f)
     return data
 

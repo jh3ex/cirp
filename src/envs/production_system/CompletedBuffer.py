@@ -8,7 +8,7 @@ Created on Sat Oct 24 21:23:44 2020
 
 import numpy as np
 
-from Buffer import Buffer
+from envs.production_system.Buffer import Buffer
 
 class CompletedBuffer(Buffer):
 
@@ -18,13 +18,13 @@ class CompletedBuffer(Buffer):
 		self.initialize()
 
 	def initialize(self):
-		self.output = 0
-		self.final_yield = 0
+		self.output = 0.0
+		self.final_yield = 0.0
 
 	def put(self, product, time_stamp):
-		self.output += 1
+		self.output += 1.0
 		if self.quality(product):
-			self.final_yield += 1
+			self.final_yield += 1.0
 		return True
 
 	def level(self):
