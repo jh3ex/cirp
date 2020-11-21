@@ -94,22 +94,22 @@ class production_discrete(MultiAgentEnv):
 
 
         return
-    
+
     def _action_check(self, actions):
         avail_actions = self.get_avail_actions()
-        
+
         for idx, a in enumerate(actions):
             assert avail_actions[idx][a] == 1, "At time [{}], agent {} is given an infeasible action {}".format(self.time, idx, a)
-        
-    
-    
+
+
+
     def step(self, actions):
         """ Returns reward, terminated, info """
         # raise NotImplementedError
         # Get the output and yield before this step
-        
+
         self._action_check(actions)
-        
+
         self.steps += 1
 
         output_before, yield_before = self.buffers["completed_buffer"].output_and_yield()
@@ -139,7 +139,7 @@ class production_discrete(MultiAgentEnv):
                     for b in m.buffer_up:
                         product = b.take()
                         if product is not None:
-                            # existing_feature = m.load(product)
+                            existing_feature = m.load(product)
                             # parameter_request[idx] = existing_feature
                             decision_time = True
                             break
@@ -259,16 +259,16 @@ class production_discrete(MultiAgentEnv):
         """ Returns the available actions for agent_id """
         # raise NotImplementedError
         obs, need_decision = self.machines[agent_id].get_node_feature()
-        
+
         # assert not need_decision, "At time {}, agent {} needs decision".format(self.time, agent_id)
-        
+
         if need_decision:
-            
+
             avail_agent_actions = [0] + [1] * (self.n_actions - 1)
         else:
             avail_agent_actions = [1] + [0] * (self.n_actions - 1)
-            
-        
+
+
         return avail_agent_actions
 
 
