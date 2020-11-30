@@ -77,7 +77,9 @@ class PGLearner_v2:
             self.logger.log_stat("pg_loss", - ((advantages.detach() * log_pi_taken) * mask).sum().item() / mask.sum().item(), t_env)
             self.logger.log_stat("advantage_mean", (advantages * mask).sum().item() / mask.sum().item(), t_env)
             self.logger.log_stat("vdac_loss", coma_loss.item(), t_env)
-            self.logger.log_stat("agent_grad_norm", grad_norm, t_env)
+            # Commented by Jing 11/21/2020 to resolve log print recent stat issue
+            # self.logger.log_stat("agent_grad_norm", grad_norm, t_env)
+            
             # self.logger.log_stat("pi_max", (pi.max(dim=1)[0] * mask).sum().item() / mask.sum().item(), t_env)
             self.log_stats_t = t_env
 

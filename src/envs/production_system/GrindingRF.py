@@ -23,8 +23,8 @@ class GrindingRF(Grinding):
 		pass
 
 
-	def initialize(self, RandomState):
-		Grinding.initialize(self, RandomState)
+	def initialize(self):
+		Grinding.initialize(self)
 		self.w = 0
 
 
@@ -32,8 +32,8 @@ class GrindingRF(Grinding):
 
 		assert self.status == "processing", "There is not product being processed"
 
-		# Update machine status (up/down)
-		self.tool_check()
+		
+		
 		# Process product
 		self.remaining_time -= time_elapsed * (1 - self.w)
 
@@ -55,11 +55,11 @@ class GrindingRF(Grinding):
 		return 5
 
 	def tool_check(self):
-		if self.w == 0 and self.RD.rand() < 1 / self.MTBF_step:
+		if self.w == 0 and np.random.rand() < 1 / self.MTBF_step:
 			# Machine is operational
 			self.w = 1
 			return
 
-		if self.w == 1 and self.RD.rand() < 1 / self.MTTR_step:
+		if self.w == 1 and np.random.rand() < 1 / self.MTTR_step:
 			self.w = 0
 			return

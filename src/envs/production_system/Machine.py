@@ -24,9 +24,9 @@ class Machine:
 		return
 
 
-	def initialize(self, RandomState):
+	def initialize(self):
 
-		self.RD = RandomState
+		
 		self.output = 0
 		self.current_product = None
 		self.remaining_time = 0

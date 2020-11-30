@@ -43,14 +43,10 @@ hypernet_embed: 64
 
 # agent
 residue: False
-num_blocks: 5
-n_head: 1
+
+n_head: 4
 
 mac: "ppo_mac"
 agent: "trans_ppo"
-adj: [[1, 1, 0, 0, 0],
-      [1, 1, 1, 0, 0],
-      [0, 1, 1, 1, 1],
-      [0, 0, 1, 1, 0],
-      [0, 0, 1, 0, 1]]
+
 name: "trans_vmix_pg_a2c"

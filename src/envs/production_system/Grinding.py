@@ -29,7 +29,7 @@ class Grinding(Machine):
 		loc = (v * a / w)**self.p1
 		scale = a**self.p2 * w**self.p3 * v**self.p4
 
-		existing_feature[self.stage] = self.RD.normal(loc=loc, scale=scale)
+		existing_feature[self.stage] = np.random.normal(loc=loc, scale=scale)
 
 		processing_time = self.p5 / (v*a)
 

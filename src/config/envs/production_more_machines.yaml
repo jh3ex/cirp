@@ -3,7 +3,8 @@ env: production_discrete
 env_args:
   buffers:
     # Buffer capacities
-    buffer_10_20: 10
+    buffer_10_20_1: 10
+    buffer_10_20_2: 10
     buffer_20_30: 10
     buffer_30_40: 10
 
@@ -20,9 +21,20 @@ env_args:
       p4: 2.0
       p5: 0.01
       buffer_up: ["incoming_buffer"]
-      buffer_down: ["buffer_10_20"]
+      buffer_down: ["buffer_10_20_1"]
       MTTR: 14
       MTBF: 180
+    m10_2:
+      stage: 0
+      p1: 0.9
+      p2: 1.4
+      p3: 0.5
+      p4: 2.0
+      p5: 0.01
+      buffer_up: ["incoming_buffer"]
+      buffer_down: ["buffer_10_20_2"]
+      MTTR: 11
+      MTBF: 130
     m20_1:
       stage: 1
       p1: 0.85
@@ -30,10 +42,21 @@ env_args:
       p3: 0.5
       p4: 2.0
       p5: 0.01
-      buffer_up: ["buffer_10_20"]
+      buffer_up: ["buffer_10_20_1"]
       buffer_down: ["buffer_20_30"]
       MTTR: 11
       MTBF: 100
+    m20_2:
+      stage: 1
+      p1: 0.85
+      p2: 1.35
+      p3: 0.5
+      p4: 2.0
+      p5: 0.01
+      buffer_up: ["buffer_10_20_2"]
+      buffer_down: ["buffer_20_30"]
+      MTTR: 18
+      MTBF: 132
     m30_1:
       stage: 2
       p1: 0.9
@@ -67,10 +90,21 @@ env_args:
       buffer_down: ["completed_buffer"]
       MTTR: 9
       MTBF: 100
+    m40_3:
+      stage: 3
+      p1: 0.85
+      p2: 1.3
+      p3: 0.5
+      p4: 2.0
+      p5: 0.03
+      buffer_up: ["buffer_30_40"]
+      buffer_down: ["completed_buffer"]
+      MTTR: 15
+      MTBF: 180
 
   sim_duration: 600
   p5_scale: 0.001
-  q_star: 0.000008
+  q_star: 0.000005
   yield_reward: 1
   defect_reward: -0.1
   actions:
@@ -121,16 +155,19 @@ log_interval: 10000
 runner_log_interval: 10000
 learner_log_interval: 10000
 t_max: 10000000  # total training episodes
-n_agents: 5
+n_agents: 8
 # adj: [[1, 1, 0, 0, 0],
 #       [1, 1, 1, 0, 0],
 #       [0, 1, 1, 1, 1],
 #       [0, 0, 1, 1, 0],
 #       [0, 0, 1, 0, 1]]
-adj: [[1, 1, 0, 0, 0],
-      [1, 1, 1, 0, 0],
-      [0, 1, 1, 1, 1],
-      [0, 0, 1, 1, 0],
-      [0, 0, 1, 0, 1]]
+adj: [[1, 0, 1, 0, 0, 0, 0, 0],
+      [0, 1, 0, 1, 0, 0, 0, 0],
+      [1, 0, 1, 0, 1, 0, 0, 0],
+      [0, 1, 0, 1, 1, 0, 0, 0],
+      [0, 0, 1, 1, 1, 1, 1, 1],
+      [0, 0, 0, 0, 1, 1, 0, 0],
+      [0, 0, 0, 0, 1, 0, 1, 0],
+      [0, 0, 0, 0, 1, 0, 0, 1]]
       
-num_blocks: 5
+num_blocks: 8

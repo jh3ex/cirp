@@ -12,9 +12,9 @@ from envs.production_system.Buffer import Buffer
 
 class CompletedBuffer(Buffer):
 
-	def __init__(self):
+	def __init__(self, default_vacancy=1):
 		super().__init__(np.inf)
-
+		self.default_vacancy = default_vacancy
 		self.initialize()
 
 	def initialize(self):
@@ -31,7 +31,7 @@ class CompletedBuffer(Buffer):
 		return 0
 
 	def vacancy(self):
-		return 1
+		return self.default_vacancy
 
 	def output_and_yield(self):
 		return self.output, self.final_yield

@@ -9,7 +9,7 @@ from envs.production_system.CompletedBuffer import CompletedBuffer
 
 
 class GrindingCB(CompletedBuffer):
-	def __init__(self, q_star):
+	def __init__(self, q_star, default_vacancy=1):
 		super().__init__()
 		self.q_star = q_star
 

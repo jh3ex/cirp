@@ -12,16 +12,17 @@ from envs.production_system.Buffer import Buffer
 
 class IncomingBuffer(Buffer):
 
-	def __init__(self, template_product):
+	def __init__(self, template_product, defaulat_level=1):
 		super().__init__(np.inf)
 		self.template_product = template_product
+		self.defaulat_level = defaulat_level
 		self.n_fed = 0
 
 	def initialize(self):
 		self.n_fed = 0
 
 	def level(self):
-		return 1
+		return self.defaulat_level
 
 	def take(self):
 		self.n_fed += 1

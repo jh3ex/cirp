@@ -24,6 +24,7 @@ class production_discrete(MultiAgentEnv):
         # self.adj = self.args["adj"]
         self.stepsize = self.args["stepsize"]
         self.episode_limit = self.args["episode_limit"]
+        self.sim_duration = self.args["sim_duration"]
 
         # Reward setting
         self.yield_reward = self.args["yield_reward"]
@@ -39,8 +40,8 @@ class production_discrete(MultiAgentEnv):
 
         self.n_agents = len(self.machines)
 
-        self.seed = self.args["seed"]
-        self.RD = np.random.RandomState(seed=self.seed)
+        # self.seed = self.args["seed"]
+        # self.RD = np.random.RandomState(seed=self.seed)
 
 
     def _build_actions(self):
@@ -61,8 +62,8 @@ class production_discrete(MultiAgentEnv):
     def _build_buffers(self):
         # Build buffers
         self.buffers = {}
-        self.buffers["incoming_buffer"] = IncomingBuffer(self.template_product)
-        self.buffers["completed_buffer"] = GrindingCB(q_star=self.args["q_star"])
+        self.buffers["incoming_buffer"] = IncomingBuffer(self.template_product, 1/self.args["obs_scale"].get("b_up", 1.0))
+        self.buffers["completed_buffer"] = GrindingCB(self.args["q_star"], 1/self.args["obs_scale"].get("b_down", 1.0))
 
         for b in self.args["buffers"]:
             self.buffers[b] = Buffer(self.args["buffers"][b])
@@ -86,8 +87,8 @@ class production_discrete(MultiAgentEnv):
                                             stage=m["stage"],
                                             buffer_up=[self.buffers[x] for x in m["buffer_up"]],
                                             buffer_down=[self.buffers[x] for x in m["buffer_down"]],
-                                            MTTR_step=m["MTTR_step"],
-                                            MTBF_step=m["MTBF_step"],
+                                            MTTR_step=m["MTTR"] * self.args["stepsize"],
+                                            MTBF_step=m["MTBF"] * self.args["stepsize"],
                                             n_product_feature=self.args["n_feature"],
                                             name=name))
 
@@ -101,24 +102,31 @@ class production_discrete(MultiAgentEnv):
         for idx, a in enumerate(actions):
             assert avail_actions[idx][a] == 1, "At time [{}], agent {} is given an infeasible action {}".format(self.time, idx, a)
 
-
+    
+    def _last_action(self, actions):
+        if self.args["obs_last_action"]:
+            if self.args["last_action_one_hot"]:
+                self.last_action = [[0] * self.n_actions] * self.n_agents
+                for idx, a in enumerate(actions):
+                    self.last_action[idx][a] = 1
+            else:
+                self.last_action = []
+                for a in actions:
+                    self.last_action.append(self.action_to_param[a])
+                    
 
     def step(self, actions):
         """ Returns reward, terminated, info """
         # raise NotImplementedError
         # Get the output and yield before this step
 
-        self._action_check(actions)
+        # self._action_check(actions)
 
         self.steps += 1
 
         output_before, yield_before = self.buffers["completed_buffer"].output_and_yield()
 
-        self.last_action = [[0] * self.n_actions] * self.n_agents
-        for idx, a in enumerate(actions):
-            self.last_action[idx][a] = 1
-
-        # parameter_request = [None] * self.n_agents
+        self._last_action(actions)
 
         decision_time = False
 
@@ -139,7 +147,7 @@ class production_discrete(MultiAgentEnv):
                     for b in m.buffer_up:
                         product = b.take()
                         if product is not None:
-                            existing_feature = m.load(product)
+                            m.load(product)
                             # parameter_request[idx] = existing_feature
                             decision_time = True
                             break
@@ -156,13 +164,14 @@ class production_discrete(MultiAgentEnv):
         if self.args["reward_scale"]:
             reward *= self.args["reward_scale_rate"]
         # self.episode_return += reward
-        terminated = (self.steps >= self.episode_limit)
+        terminated = (self.steps >= self.episode_limit) or (self.time > self.sim_duration)
         # terminated = (self.time >= self.args["sim_duration"])
         info = {}
         if terminated:
             info["output"] = self.output
-            info["yields"] = self.yields
+            info["yield"] = self.yields
             info["duration"] = self.time
+            info["yield_rate"] = self.yields/self.time
             # info["reward"] = self.episode_return
 
 
@@ -201,7 +210,12 @@ class production_discrete(MultiAgentEnv):
             obs.append(0)
 
         if self.args["obs_last_action"]:
-            obs += self.last_action[agent_id]
+            if self.args["last_action_one_hot"]:
+                obs += self.last_action[agent_id]
+            else:
+                scale = self.args["obs_scale"].get("actions", [1, 1, 1])
+                for idx, action in enumerate(self.last_action[agent_id]):
+                    obs.append(action * scale[idx])
 
         if self.args["obs_agent_id"]:
             obs.append(agent_id / self.n_agents)
@@ -222,7 +236,10 @@ class production_discrete(MultiAgentEnv):
         size += 1  # Include decision or not
 
         if self.args["obs_last_action"]:
-            size += self.n_actions
+            if self.args["last_action_one_hot"]:
+                size += self.n_actions
+            else:
+                size += len(self.action_to_param[0])
 
         if self.args["obs_agent_id"]:
             size += 1
@@ -278,12 +295,13 @@ class production_discrete(MultiAgentEnv):
         # raise NotImplementedError
         return self.n_actions
 
-    def reset(self):
+    def reset(self, seed=None):
         """ Returns initial observations and states"""
         # raise NotImplementedError
         # Random seed for simulation
 
-
+        if seed:
+            np.random.seed(seed)
         # Simulation time horizon
         self.stepsize = self.args["stepsize"]
         self.steps = 0
@@ -291,11 +309,16 @@ class production_discrete(MultiAgentEnv):
         # self.episode_return = 0.0
 
         self.output, self.yields = 0, 0
-        self.last_action = [[0] * self.n_actions] * self.n_agents
+        
+        if self.args["obs_last_action"]:
+            if self.args["last_action_one_hot"]:
+                self.last_action = [[0] * self.n_actions] * self.n_agents
+            else:
+                self.last_action = [self.action_to_param[0]] * self.n_agents
 
         # Initialize everthing
         for m in self.machines:
-            m.initialize(self.RD)
+            m.initialize()
 
         for b in self.buffers:
             self.buffers[b].initialize()
@@ -306,8 +329,9 @@ class production_discrete(MultiAgentEnv):
     def get_stats(self):
         # Add per warning during running
         self.stats = {"output": self.output,
-                      "yields": self.yields,
-                      "duration": self.time}
+                      "yield": self.yields,
+                      "duration": self.time,
+                      "yield_rate": self.yields/self.time}
 
         return self.stats
 
