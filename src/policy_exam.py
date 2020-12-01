@@ -13,19 +13,6 @@ from utils.logging import get_logger
 
 import json
 
-
-
-SETTINGS['CAPTURE_MODE'] = "fd" # set to "no" if you want to see stdout/stderr in console
-logger = get_logger()
-
-# ex = Experiment("pymarl")
-# ex.logger = logger
-# ex.captured_out_filter = apply_backspaces_and_linefeeds
-
-# results_path = os.path.join(dirname(dirname(abspath(__file__))), "results")
-
-
-
 import datetime
 import os
 import pprint
@@ -49,6 +36,7 @@ from envs import REGISTRY as env_REGISTRY
 from functools import partial
 from components.episode_buffer import EpisodeBatch
 import numpy as np
+
 
 
 class ExamRunner:
@@ -126,7 +114,7 @@ class ExamRunner:
 
 
 
-        
+
 
 
 def run_sequential(args, logger):
@@ -184,53 +172,23 @@ def run_sequential(args, logger):
     if args.use_cuda:
         learner.cuda()
 
-    if args.checkpoint_path != "":
-
-        timesteps = []
-        timestep_to_load = 0
-
-        if not os.path.isdir(args.checkpoint_path):
-            logger.console_logger.info("Checkpoint directiory {} doesn't exist".format(args.checkpoint_path))
-            return
-
-        # Go through all files in args.checkpoint_path
-        for name in os.listdir(args.checkpoint_path):
-            full_name = os.path.join(args.checkpoint_path, name)
-            # Check if they are dirs the names of which are numbers
-            if os.path.isdir(full_name) and name.isdigit():
-                timesteps.append(int(name))
-
-        if args.load_step == 0:
-            # choose the max timestep
-            timestep_to_load = max(timesteps)
-        else:
-            # choose the timestep closest to load_step
-            timestep_to_load = min(timesteps, key=lambda x: abs(x - args.load_step))
-
-        model_path = os.path.join(args.checkpoint_path, str(timestep_to_load))
-
-        logger.console_logger.info("Loading model from {}".format(model_path))
-        learner.load_models(model_path)
-        runner.t_env = timestep_to_load
-
-        if args.evaluate or args.save_replay:
-            evaluate_sequential(args, runner)
-            return
 
 
-    logger.console_logger.info("Beginning training for {} timesteps".format(args.t_max))
+    logger.console_logger.info("Loading model from {}".format(model_path))
+    learner.load_models(model_path)
+    runner.t_env = timestep_to_load
 
-    while runner.t_env <= args.t_max:
-        # runner.t_env is total episode number up to now
-        # args.t_max is the maximum episodes you want to run
 
-        """
-        RUNNING occurs here
-        """
-        # Run for **a whole episode** at a time
-        runner.run(test_mode=True)
 
-       
+    logger.console_logger.info("Beginning examing for {} timesteps".format(args.t_max))
+
+    """
+    RUNNING occurs here
+    """
+    # Run for **a whole episode** at a time
+    runner.run(test_mode=True)
+
+
     runner.close_env()
     logger.console_logger.info("Finished Examing")
 
@@ -248,19 +206,30 @@ def config_copy(config):
 
 if __name__ == '__main__':
     params = deepcopy(sys.argv)
-    # args: {"sacred": int, "model_path": path string}
-    
+    # args: {"sacred": int, "model_path": path string, "timestep": int}
+
     with open(os.path.join(os.path.dirname(__file__), "sacred", params["sacred"], "config.json"), "r") as fname:
         config_dict = json.load(fname)
-    
+
     config_dict["checkpoint_path"] = params["model_path"]
+    config_dict["timestep_to_load"] = params["timestep"]
+
+    config_dict["model_path"] = os.path.join(args["checkpoint_path"], args["timestep_to_load"])
+
     config = config_copy(config_dict)
     np.random.seed(config["seed"])
     th.manual_seed(config["seed"])
     config['env_args']['seed'] = config["seed"]
-    
+
+    args = SN(**config)
+
+    SETTINGS['CAPTURE_MODE'] = "fd" # set to "no" if you want to see stdout/stderr in console
+    logger = get_logger()
+    results_path = os.path.join(dirname(dirname(abspath(__file__))), "results")
+
+
 #    config_dict = recursive_dict_update(config_dict, sacred_config)
-    
+
 #    env_config = _get_config(params, "--env-config", "envs")
 #    alg_config = _get_config(params, "--config", "algs")
     # config_dict = {**config_dict, **env_config, **alg_config}

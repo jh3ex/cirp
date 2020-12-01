@@ -26,14 +26,15 @@ class Machine:
 
 	def initialize(self):
 
-		
+
 		self.output = 0
 		self.current_product = None
 		self.remaining_time = 0
 		self.status = "to load"
+		self.time = 0
 
 
-	def quote(self):
+	def quote(self, time_elapsed=0):
 		"""
 		Quote current status
 
@@ -45,6 +46,8 @@ class Machine:
 		Current product id.
 
 		"""
+		if time_elapsed != 0:
+			self.time += time_elapsed
 		self.tool_check()
 
 		return self.status, self.current_product

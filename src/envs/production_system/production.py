@@ -87,8 +87,8 @@ class production_discrete(MultiAgentEnv):
                                             stage=m["stage"],
                                             buffer_up=[self.buffers[x] for x in m["buffer_up"]],
                                             buffer_down=[self.buffers[x] for x in m["buffer_down"]],
-                                            MTTR_step=m["MTTR"] * self.args["stepsize"],
-                                            MTBF_step=m["MTBF"] * self.args["stepsize"],
+                                            MTTR=m["MTTR"],
+                                            MTBF=m["MTBF"],
                                             n_product_feature=self.args["n_feature"],
                                             name=name))
 
@@ -102,7 +102,7 @@ class production_discrete(MultiAgentEnv):
         for idx, a in enumerate(actions):
             assert avail_actions[idx][a] == 1, "At time [{}], agent {} is given an infeasible action {}".format(self.time, idx, a)
 
-    
+
     def _last_action(self, actions):
         if self.args["obs_last_action"]:
             if self.args["last_action_one_hot"]:
@@ -113,7 +113,7 @@ class production_discrete(MultiAgentEnv):
                 self.last_action = []
                 for a in actions:
                     self.last_action.append(self.action_to_param[a])
-                    
+
 
     def step(self, actions):
         """ Returns reward, terminated, info """
@@ -135,7 +135,7 @@ class production_discrete(MultiAgentEnv):
             for idx, m in enumerate(self.machines):
                 # Iterate over all machines
                 # Quote machine current product and status
-                status, product = m.quote()
+                status, product = m.quote(self.stepsize)
                 if status == "processing":
                     m.processing(self.stepsize)
                 elif status == "to release":
@@ -309,7 +309,7 @@ class production_discrete(MultiAgentEnv):
         # self.episode_return = 0.0
 
         self.output, self.yields = 0, 0
-        
+
         if self.args["obs_last_action"]:
             if self.args["last_action_one_hot"]:
                 self.last_action = [[0] * self.n_actions] * self.n_agents
@@ -359,26 +359,26 @@ class production_discrete(MultiAgentEnv):
         return env_info
 
 
-#if __name__ == "__main__":
-#    from types import SimpleNamespace as SN
-#    import yaml
-#    import numpy as np
-#
-#    with open('D:/OneDrive/Script/graph/pymarl_adaptive_graph/src/config/envs/production.yaml', 'r') as f:
-#        _config = yaml.load(f)
-#    env_config = _config['env_args']
-#    env = production_discrete(**env_config)
-#    env.reset()
-#    terminated = False
-#
-#    while not terminated:
-#        rand_action = np.random.rand(env.n_agents, env.n_actions)
-#        print('At time [{}], available actions are {}'.format(env.time, env.get_avail_actions()))
-#        print("state is {}".format(env.get_state()))
-#        logits = rand_action * np.array(env.get_avail_actions())
-#        p = logits / np.sum(logits, axis=1, keepdims=True)
-#        rand_action = np.argmax(p, axis=1)
-#        r, terminated, info = env.step(rand_action)
-#        print(r)
-#    print(info)
-#    print(env.get_env_info())
+if __name__ == "__main__":
+    from types import SimpleNamespace as SN
+    import yaml
+    import numpy as np
+
+    with open('D:/OneDrive/Script/graph/pymarl_adaptive_graph/src/config/envs/production.yaml', 'r') as f:
+        _config = yaml.load(f)
+    env_config = _config['env_args']
+    env = production_discrete(**env_config)
+    env.reset()
+    terminated = False
+
+    while not terminated:
+        rand_action = np.random.rand(env.n_agents, env.n_actions)
+        print('At time [{}], available actions are {}'.format(env.time, env.get_avail_actions()))
+        print("state is {}".format(env.get_state()))
+        logits = rand_action * np.array(env.get_avail_actions())
+        p = logits / np.sum(logits, axis=1, keepdims=True)
+        rand_action = np.argmax(p, axis=1)
+        r, terminated, info = env.step(rand_action)
+        print(r)
+    print(info)
+    print(env.get_env_info())

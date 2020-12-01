@@ -70,7 +70,7 @@ env_args:
 
   sim_duration: 600
   p5_scale: 0.001
-  q_star: 0.000008
+  q_star: 0.000005
   yield_reward: 1
   defect_reward: -0.1
   actions:
@@ -132,5 +132,5 @@ adj: [[1, 1, 0, 0, 0],
       [0, 1, 1, 1, 1],
       [0, 0, 1, 1, 0],
       [0, 0, 1, 0, 1]]
-      
+
 num_blocks: 5

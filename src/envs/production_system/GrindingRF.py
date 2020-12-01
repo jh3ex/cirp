@@ -14,11 +14,11 @@ import numpy as np
 # Condider random failure
 
 class GrindingRF(Grinding):
-	def __init__(self, MTTR_step, MTBF_step, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+	def __init__(self, MTTR, MTBF, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
 		super().__init__(p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name)
 
-		self.MTTR_step = MTTR_step
-		self.MTBF_step = MTBF_step
+		self.MTTR = MTTR
+		self.MTBF = MTBF
 		self.w = 0
 		pass
 
@@ -26,14 +26,16 @@ class GrindingRF(Grinding):
 	def initialize(self):
 		Grinding.initialize(self)
 		self.w = 0
+		self.time_when_fail = np.random.exponential(self.MTBF)
+
 
 
 	def processing(self, time_elapsed):
 
 		assert self.status == "processing", "There is not product being processed"
 
-		
-		
+
+
 		# Process product
 		self.remaining_time -= time_elapsed * (1 - self.w)
 
@@ -55,11 +57,13 @@ class GrindingRF(Grinding):
 		return 5
 
 	def tool_check(self):
-		if self.w == 0 and np.random.rand() < 1 / self.MTBF_step:
-			# Machine is operational
-			self.w = 1
-			return
-
-		if self.w == 1 and np.random.rand() < 1 / self.MTTR_step:
-			self.w = 0
-			return
+		if self.w == 0:
+			if self.time >= self.time_when_fail:
+				# Machine will fail
+				self.w = 1
+				self.time_when_back = self.time + np.random.exponential(self.MTTR)
+		else:
+			if self.time >= self.time_when_back:
+				# Machine comes back
+				self.w = 0
+				self.time_when_fail = self.time + np.random.exponential(self.MTBF)
