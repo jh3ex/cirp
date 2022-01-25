@@ -5,9 +5,9 @@ In this environment, actions are discrete.
 @author: jingh
 """
 
-from Buffer import Buffer, GrindingCB, IncomingBuffer
-from Machine import GrindingRF
-from Product import Product
+from envs.production_system.Buffer import Buffer, GrindingCB, IncomingBuffer
+from envs.production_system.Machine import GrindingRF
+from envs.production_system.Product import Product
 
 import numpy as np
 from copy import deepcopy
@@ -439,6 +439,3 @@ if __name__ == "__main__":
         o.append(info["output"])
         d.append(o[-1] - y[-1])
         ratio.append(y[-1] / o[-1])
-
-
-
