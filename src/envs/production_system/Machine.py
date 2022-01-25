@@ -5,7 +5,7 @@ Created on Mon Sep 21 06:51:18 2020
 @author: jingh
 """
 
-
+import numpy as np
 
 class Machine:
 	def __init__(self, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
@@ -147,3 +147,230 @@ class Machine:
 
 	def tool_check(self):
 		pass
+
+
+
+
+
+
+class Grinding(Machine):
+	def __init__(self, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+		super().__init__(features, stage, buffer_up, buffer_down, n_product_feature, name)
+		self.p1 = p1
+		self.p2 = p2
+		self.p3 = p3
+		self.p4 = p4
+		self.p5 = p5
+
+		return
+
+
+	def process_model(self, existing_feature, process_param):
+
+		v, w, a = process_param
+
+
+		loc = (v * a / w)**self.p1
+		scale = a**self.p2 * w**self.p3 * v**self.p4
+
+		existing_feature[self.stage] = np.random.normal(loc=loc, scale=scale)
+
+		processing_time = self.p5 / (v*a)
+
+		return processing_time, existing_feature
+
+
+
+# Condider random failure
+
+class GrindingRF(Grinding):
+	def __init__(self, MTTR, MTBF, p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+		super().__init__(p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name)
+
+		self.MTTR = MTTR
+		self.MTBF = MTBF
+		self.w = 0
+		pass
+
+
+	def initialize(self):
+		Grinding.initialize(self)
+		self.w = 0
+		self.time_when_fail = np.random.exponential(self.MTBF)
+
+
+
+	def processing(self, time_elapsed):
+
+		assert self.status == "processing", "There is not product being processed"
+
+
+
+		# Process product
+		self.remaining_time -= time_elapsed * (1 - self.w)
+
+		if self.remaining_time <= 0:
+			self.remaining_time = 0.0
+			self.status = "to release"
+
+		return self.remaining_time
+
+	def get_node_feature(self):
+		node_feature, need_decision = Grinding.get_node_feature(self)
+
+		# Append machine random failure status
+		node_feature["w"] = self.w
+
+		return node_feature, need_decision
+
+	def get_feature_size(self):
+		return 5
+
+	def tool_check(self):
+		if self.w == 0:
+			if self.time >= self.time_when_fail:
+				# Machine will fail
+				self.w = 1
+				self.time_when_back = self.time + np.random.exponential(self.MTTR)
+		else:
+			if self.time >= self.time_when_back:
+				self.w = 0
+				self.time_when_fail = self.time + np.random.exponential(self.MTBF)
+
+
+
+
+class GrindingHMM(Grinding):
+	def __init__(self, tp, ep, p6, time_to_dress, fixed_dress_schedule, pass_to_dress,
+				 p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+		super().__init__(p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name)
+
+		self.tp = np.array(tp)
+		self.n_tool_state = self.tp.shape[0]
+
+		for i in range(self.n_tool_state):
+			self.tp[i] /= self.tp[i].sum()
+
+		self.ep = np.array(ep)
+
+		for i in range(self.n_tool_state):
+			self.ep[i] /= self.ep[i].sum()
+
+		self.p6 = p6
+
+
+		self.time_to_dress = time_to_dress
+		self.fixed_dress_schedule = fixed_dress_schedule
+
+		if self.fixed_dress_schedule:
+			self.pass_to_dress = pass_to_dress
+
+
+		self.w = 0
+		pass
+
+
+	def initialize(self):
+		self.tool_state = np.random.choice(self.n_tool_state)
+		self.passes = 0
+		Grinding.initialize(self)
+
+
+	def load(self, product):
+
+		assert self.status == "to load", "Machine is not ready to load"
+
+		# Set current product
+		self.current_product = product
+
+		self.status = "awaiting parameter"
+
+		return self.current_product.existing_feature()
+
+
+	def process_model(self, existing_feature, process_param):
+
+		v, w, a = process_param
+
+		loc = (v * a / w)**self.p1 * self.p6[self.tool_state]
+
+
+		scale = a**self.p2 * w**self.p3 * v**self.p4
+
+		existing_feature[self.stage] = np.random.normal(loc=loc, scale=scale)
+
+		processing_time = self.p5 / (v*a)
+
+		return processing_time, existing_feature
+
+	def processing(self, time_elapsed):
+
+		assert self.status == "processing", "There is not product being processed"
+
+		# Process product
+		self.remaining_time -= time_elapsed * (1 - self.w)
+
+		if self.remaining_time <= 0:
+			self.remaining_time = 0.0
+			self.status = "to release"
+			self.passes += 1
+
+		return self.remaining_time
+
+
+	def dress(self):
+		assert self.status == "to dress", "Machine is not ready to dress"
+		self.dress_time = self.time_to_dress
+		self.status = "dressing"
+		self.w = 1
+		self.passes = 0
+
+	def release(self):
+		assert self.status == "to release", "Product is not ready to release"
+		# Release current product
+
+
+		self.output += 1
+
+		released_product = self.current_product
+
+		self.current_product = None
+
+		self.status = "to dress"
+
+		return released_product
+
+
+	def get_node_feature(self):
+		node_feature, need_decision = Grinding.get_node_feature(self)
+
+		# Append machine random failure status
+		node_feature["w"] = self.w
+		# Append tool state observation
+		self.tool_ob = np.random.choice(self.n_tool_state, p=self.ep[self.tool_state])
+		node_feature["tool_ob"] = self.tool_ob
+		node_feature["passes"] = self.passes
+
+		need_dress = self.status == "to dress"
+
+		return node_feature, need_decision, need_dress
+
+	def get_feature_size(self):
+		return 7
+
+	def tool_check(self):
+		if self.fixed_dress_schedule and self.status == "to dress":
+			if self.passes >= self.pass_to_dress:
+				self.dress()
+			else:
+				self.status = "to load"
+
+
+		if self.w == 0:
+			self.tool_state = np.random.choice(self.n_tool_state, p=self.tp[self.tool_state])
+
+		elif self.w == 1:
+			self.dress_time -= 1
+			if self.dress_time <= 0:
+				self.w = 0
+				self.status = "to load"

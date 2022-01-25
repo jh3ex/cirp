@@ -6,7 +6,6 @@ Created on Mon Sep 21 14:20:10 2020
 """
 
 import numpy as np
-import copy
 
 
 class Buffer:
@@ -104,91 +103,3 @@ class Buffer:
 
 		else:
 			return False
-
-
-
-
-
-class IncomingBuffer(Buffer):
-
-	def __init__(self, template_product, defaulat_level=1):
-		super().__init__(np.inf)
-		self.template_product = template_product
-		self.defaulat_level = defaulat_level
-		self.n_fed = 0
-
-	def initialize(self):
-		self.n_fed = 0
-
-	def level(self):
-		return self.defaulat_level
-
-	def take(self):
-		self.n_fed += 1
-
-		new_product = copy.deepcopy(self.template_product)
-		new_product.index = self.n_fed
-		return new_product
-
-
-
-class CompletedBuffer(Buffer):
-
-	def __init__(self, default_vacancy=1):
-		super().__init__(np.inf)
-		self.default_vacancy = default_vacancy
-		self.initialize()
-
-	def initialize(self):
-		self.output = 0.0
-		self.final_yield = 0.0
-
-	def put(self, product, time_stamp):
-		self.output += 1.0
-		if self.quality(product):
-			self.final_yield += 1.0
-		return True
-
-	def level(self):
-		return 0
-
-	def vacancy(self):
-		return self.default_vacancy
-
-	def output_and_yield(self):
-		return self.output, self.final_yield
-
-	def quality(self, product) -> bool:
-		"""
-		Quality standard used to evaluate final product.
-
-		Parameters
-		----------
-		product : object
-			Final product.
-
-		Returns
-		-------
-		bool
-			If the product pass quality inspection.
-
-		"""
-		pass
-
-
-
-
-class GrindingCB(CompletedBuffer):
-	def __init__(self, q_star, default_vacancy=1):
-		super().__init__()
-		self.q_star = q_star
-
-	def quality(self, product):
-
-
-		q = sum(product.existing_feature())
-
-		return q < self.q_star
-
-
-
