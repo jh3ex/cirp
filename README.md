@@ -1,6 +1,16 @@
-```diff
-- Dec 4th - Updated to use SMAC V1. 
-```
+# 2021_GNN_Process_System_CIRP_JingHuang
+
+## Environment
+Python
+
+## Technical Approach
+GNN, GRU, MARL
+
+
+## Reference
+Su, J., Adams, S., & Beling, P. A. (2020). Counterfactual multi-agent reinforcement learning with graph convolution communication. arXiv preprint arXiv:2004.00470.
+Su, J., Adams, S., & Beling, P. A. (2020). Value-Decomposition Multi-Agent Actor-Critics. arXiv preprint arXiv:2007.12306.
+
 
 # Python MARL framework
 
