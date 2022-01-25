@@ -1,4 +1,4 @@
-env: production_discrete
+env: production_hmm
 
 env_args:
   buffers:
@@ -9,7 +9,7 @@ env_args:
 
   n_stage: 4
   n_feature: 4
-  machine_name: "grinding"
+  machine_name: "grinding_hmm"
 
   fixed_dress_schedule: True
   n_tool_state: 4
