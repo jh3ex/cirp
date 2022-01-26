@@ -11,7 +11,7 @@ env_args:
   n_feature: 4
   machine_name: "grinding_hmm"
 
-  fixed_dress_schedule: True
+  fixed_dress_schedule: False
   n_tool_state: 4
   pass_to_dress: 10
 
