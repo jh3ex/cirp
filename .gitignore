@@ -1,4 +1,6 @@
-/results/*
-/slurm/results/*
+/results/models/*
+
 /slurm/*.err
 /slurm/*.out
+
+*.pyc
