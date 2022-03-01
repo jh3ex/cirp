@@ -1,0 +1,234 @@
+env: production_rbe
+
+env_args:
+  buffers:
+    # Buffer capacities
+    buffer_10_20: 10
+    buffer_20_30: 10
+    buffer_30_40: 10
+
+  n_stage: 4
+  n_feature: 4
+  machine_name: "grinding_rbe"
+
+  use_tool_belief: True
+
+  fixed_dress_schedule: True
+  n_tool_state: 4
+
+  pass_to_dress: 15
+
+  machines:
+    m10_1:
+      stage: 0
+      p1: 0.9
+      p2: 1.4
+      p3: 0.5
+      p4: 2.0
+      p5: 0.000005
+      p5_scale: [1.0, 1.2, 1.4, 2.1]
+      buffer_up: ["incoming_buffer"]
+      buffer_down: ["buffer_10_20"]
+      tp: [[0.60, 0.27, 0.08, 0.05],
+           [0.00, 0.65, 0.26, 0.09],
+           [0.00, 0.00, 0.70, 0.30],
+           [0.00, 0.00, 0.00, 1.00]]
+      ep: [[0.70, 0.17, 0.12, 0.01],
+           [0.10, 0.70, 0.16, 0.04],
+           [0.25, 0.10, 0.60, 0.05],
+           [0.22, 0.18, 0.05, 0.55]]
+
+      p6: [1.0, 0.99, 0.98, 0.96]
+
+      time_to_dress: 3
+
+
+    m20_1:
+      stage: 1
+      p1: 0.85
+      p2: 1.35
+      p3: 0.5
+      p4: 2.0
+      p5: 0.00001
+      p5_scale: [1.0, 1.2, 1.4, 2.1]
+      buffer_up: ["buffer_10_20"]
+      buffer_down: ["buffer_20_30"]
+      tp: [[0.60, 0.27, 0.08, 0.05],
+           [0.00, 0.65, 0.26, 0.09],
+           [0.00, 0.00, 0.70, 0.30],
+           [0.00, 0.00, 0.00, 1.00]]
+      ep: [[0.70, 0.17, 0.12, 0.01],
+           [0.10, 0.70, 0.16, 0.04],
+           [0.25, 0.10, 0.60, 0.05],
+           [0.22, 0.18, 0.05, 0.55]]
+
+      p6: [1.0, 0.99, 0.98, 0.96]
+
+      time_to_dress: 3
+
+    m20_2:
+      stage: 1
+      p1: 0.85
+      p2: 1.35
+      p3: 0.5
+      p4: 2.0
+      p5: 0.00001
+      p5_scale: [1.0, 1.2, 1.4, 2.1]
+      buffer_up: ["buffer_10_20"]
+      buffer_down: ["buffer_20_30"]
+      tp: [[0.60, 0.27, 0.08, 0.05],
+           [0.00, 0.65, 0.26, 0.09],
+           [0.00, 0.00, 0.70, 0.30],
+           [0.00, 0.00, 0.00, 1.00]]
+      ep: [[0.70, 0.17, 0.12, 0.01],
+           [0.10, 0.70, 0.16, 0.04],
+           [0.25, 0.10, 0.60, 0.05],
+           [0.22, 0.18, 0.05, 0.55]]
+
+      p6: [1.0, 0.99, 0.98, 0.96]
+
+      time_to_dress: 3
+
+    m30_1:
+      stage: 2
+      p1: 0.9
+      p2: 1.5
+      p3: 0.5
+      p4: 2.0
+      p5: 0.000007
+      p5_scale: [1.0, 1.2, 1.4, 2.1]
+      buffer_up: ["buffer_20_30"]
+      buffer_down: ["buffer_30_40"]
+      tp: [[0.60, 0.27, 0.08, 0.05],
+           [0.00, 0.65, 0.26, 0.09],
+           [0.00, 0.00, 0.70, 0.30],
+           [0.00, 0.00, 0.00, 1.00]]
+      ep: [[0.70, 0.17, 0.12, 0.01],
+           [0.10, 0.70, 0.16, 0.04],
+           [0.25, 0.10, 0.60, 0.05],
+           [0.22, 0.18, 0.05, 0.55]]
+
+      p6: [1.0, 0.99, 0.98, 0.96]
+
+      time_to_dress: 3
+
+
+    m40_1:
+      stage: 3
+      p1: 0.85
+      p2: 1.3
+      p3: 0.5
+      p4: 2.0
+      p5: 0.00001
+      p5_scale: [1.0, 1.2, 1.4, 2.1]
+      buffer_up: ["buffer_30_40"]
+      buffer_down: ["completed_buffer"]
+      tp: [[0.60, 0.27, 0.08, 0.05],
+           [0.00, 0.65, 0.26, 0.09],
+           [0.00, 0.00, 0.70, 0.30],
+           [0.00, 0.00, 0.00, 1.00]]
+      ep: [[0.70, 0.17, 0.12, 0.01],
+           [0.10, 0.70, 0.16, 0.04],
+           [0.25, 0.10, 0.60, 0.05],
+           [0.22, 0.18, 0.05, 0.55]]
+
+      p6: [1.0, 0.99, 0.98, 0.96]
+
+      time_to_dress: 3
+
+    m40_2:
+      stage: 3
+      p1: 0.85
+      p2: 1.3
+      p3: 0.5
+      p4: 2.0
+      p5: 0.00001
+      p5_scale: [1.0, 1.2, 1.4, 2.1]
+      buffer_up: ["buffer_30_40"]
+      buffer_down: ["completed_buffer"]
+      tp: [[0.60, 0.27, 0.08, 0.05],
+           [0.00, 0.65, 0.26, 0.09],
+           [0.00, 0.00, 0.70, 0.30],
+           [0.00, 0.00, 0.00, 1.00]]
+      ep: [[0.70, 0.17, 0.12, 0.01],
+           [0.10, 0.70, 0.16, 0.04],
+           [0.25, 0.10, 0.60, 0.05],
+           [0.22, 0.18, 0.05, 0.55]]
+
+      p6: [1.0, 0.99, 0.98, 0.96]
+
+      time_to_dress: 3
+
+
+  sim_duration: 600
+  q_star: 0.000006
+  yield_reward: 1
+  defect_reward: -1
+  actions:
+    v: [0.3, 0.35, 0.4, 0.45, 0.5]
+    w: [30.0]
+    a: [0.000012, 0.0000135, 0.000015, 0.0000165, 0.000018]
+
+  obs_scale:
+    stage: 1
+    b_up: 0.1
+    b_down: 0.1
+    remaining_time: 0.2
+    product_feature: 100000
+    w: 1
+    actions: [2.0, 0.3, 55000]
+    passes: 0.1
+
+  stepsize: 0.1
+  continuing_episode: False
+  episode_limit: 10000
+  # sim_duration: 1000000
+  # map_name: 26
+  obs_instead_of_state: True
+  obs_last_action: True
+  last_action_one_hot: False
+  obs_agent_id: True
+  # obs_own_health: True
+  # obs_all_health: False
+  # obs_all_cost: False
+  # obs_own_cost: True
+  # obs_timestep_number: False
+  reward_scale: True
+  reward_scale_rate: 0.2
+  # replay_dir: ""
+  # replay_prefix: ""
+  # state_last_action: False
+  # state_own_cost: True
+  # state_profit: True
+  # state_timestep_number: False
+  # seed: 1234
+  # debug: False
+
+seed: 1234
+batch_size: 8
+test_greedy: False
+test_nepisode: 96
+test_interval: 10000
+log_interval: 10000
+runner_log_interval: 10000
+learner_log_interval: 10000
+t_max: 10000000  # total training episodes
+n_agents: 6
+# adj: [[1, 1, 0, 0, 0],
+#       [1, 1, 1, 0, 0],
+#       [0, 1, 1, 1, 1],
+#       [0, 0, 1, 1, 0],
+#       [0, 0, 1, 0, 1]]
+# adj: [[1, 1, 0, 0, 0],
+#       [1, 1, 1, 0, 0],
+#       [0, 1, 1, 1, 1],
+#       [0, 0, 1, 1, 0],
+#       [0, 0, 1, 0, 1]]
+adj: [[1, 1, 0, 0, 0, 0],
+      [1, 1, 1, 1, 0, 0],
+      [0, 1, 1, 0, 0, 0],
+      [0, 1, 0, 1, 1, 1],
+      [0, 0, 0, 1, 1, 0],
+      [0, 0, 0, 1, 0, 1]]
+
+num_blocks: 6
