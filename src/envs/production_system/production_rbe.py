@@ -5,15 +5,20 @@ In this environment, machine tool follows hidden markov model.
 @author: jingh
 """
 
-from envs.production_system.Buffer import Buffer, GrindingCB, IncomingBuffer
-from envs.production_system.Machine import GrindingHMM
-from envs.production_system.Product import Product
+# from envs.production_system.Buffer import Buffer, GrindingCB, IncomingBuffer
+# from envs.production_system.Machine import GrindingRBE
+# from envs.production_system.Product import Product
+
+
+from Buffer import Buffer, GrindingCB, IncomingBuffer
+from Machine import GrindingRBE
+from Product import Product
 
 import numpy as np
 from copy import deepcopy
 
 
-class production_hmm():
+class production_rbe():
     def __init__(self, **env_args):
         """
         Env parameters
@@ -87,7 +92,7 @@ class production_hmm():
         for idx, name in enumerate(self.args["machines"]):
             m = self.args["machines"][name]
 
-            self.machines.append(GrindingHMM(tp=m["tp"],
+            self.machines.append(GrindingRBE(tp=m["tp"],
                                             ep=m["ep"],
                                             p6=m["p6"],
                                             time_to_dress=m["time_to_dress"],
@@ -97,7 +102,8 @@ class production_hmm():
                                             p2=m["p2"],
                                             p3=m["p3"],
                                             p4=m["p4"],
-                                            p5=m["p5"] * self.args["p5_scale"],
+                                            p5=m["p5"],
+                                            p5_scale=m["p5_scale"],
                                             features=None,
                                             stage=m["stage"],
                                             buffer_up=[self.buffers[x] for x in m["buffer_up"]],
@@ -170,6 +176,7 @@ class production_hmm():
                         m.dress()
                     else:
                         m.status = "to load"
+
                 elif status == "to load":
                     for b in m.buffer_up:
                         product = b.take()
@@ -225,9 +232,11 @@ class production_hmm():
         stage_one_hot[node_feature["stage"]] = 1
         node_feature["stage"] = stage_one_hot
 
-        tool_ob_one_hot = [0] * self.args["n_tool_state"]
-        tool_ob_one_hot[node_feature["tool_ob"]] = 1
-        node_feature["tool_ob"] = tool_ob_one_hot
+        if not self.use_tool_belief:
+            # Directly using observation instead of belief
+            tool_ob_one_hot = [0] * self.args["n_tool_state"]
+            tool_ob_one_hot[node_feature["tool_ob"]] = 1
+            node_feature["tool_ob"] = tool_ob_one_hot
 
         for key, value in node_feature.items():
             scale = self.args["obs_scale"].get(key, 1)
@@ -335,8 +344,6 @@ class production_hmm():
 
     def get_total_actions(self):
         """ Returns the total number of actions an agent could ever take """
-        # TODO: This is only suitable for a discrete 1 dimensional action space for each agent
-        # raise NotImplementedError
         return self.n_actions
 
     def reset(self, seed=None):
@@ -438,10 +445,10 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
 
-    with open('./hmm.yaml', 'r') as f:
+    with open('../../config/envs/production_rbe.yaml', 'r') as f:
         _config = yaml.load(f, Loader=yaml.FullLoader)
     env_config = _config['env_args']
-    env = production_discrete(**env_config)
+    env = production_rbe(**env_config)
 
 
 

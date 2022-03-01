@@ -70,7 +70,7 @@ class Machine:
 		processing_time, updated_feature = self.process_model(self.current_product.existing_feature(), process_parameter)
 
 		# Tool model
-		self.tool_model()
+		# self.tool_model()
 		# Update product
 		self.current_product.process(self.stage, process_parameter, processing_time, updated_feature)
 
@@ -240,9 +240,9 @@ class GrindingRF(Grinding):
 
 
 
-class GrindingHMM(Grinding):
+class GrindingRBE(Grinding):
 	def __init__(self, tp, ep, p6, time_to_dress, fixed_dress_schedule, pass_to_dress,
-				 p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
+				 p1, p2, p3, p4, p5, p5_scale, features, stage, buffer_up, buffer_down, n_product_feature, name=None):
 		super().__init__(p1, p2, p3, p4, p5, features, stage, buffer_up, buffer_down, n_product_feature, name)
 
 		self.tp = np.array(tp)
@@ -257,7 +257,7 @@ class GrindingHMM(Grinding):
 			self.ep[i] /= self.ep[i].sum()
 
 		self.p6 = p6
-
+		self.p5_scale = p5_scale
 
 		self.time_to_dress = time_to_dress
 		self.fixed_dress_schedule = fixed_dress_schedule
@@ -270,8 +270,24 @@ class GrindingHMM(Grinding):
 		pass
 
 
+	def quote(self, time_elapsed=0):
+
+		if time_elapsed != 0:
+			self.time += time_elapsed
+		self.tool_check(time_elapsed)
+
+		return self.status, self.current_product
+
+
 	def initialize(self):
 		self.tool_state = np.random.choice(self.n_tool_state)
+		self.tool_ob = np.random.choice(self.n_tool_state, p=self.ep[self.tool_state])
+
+		self.tool_belief = np.random.rand(self.n_tool_state)
+		self.tool_belief /= self.tool_belief.sum()
+
+
+
 		self.passes = 0
 		Grinding.initialize(self)
 
@@ -284,6 +300,17 @@ class GrindingHMM(Grinding):
 		self.current_product = product
 
 		self.status = "awaiting parameter"
+
+		self.tool_state = np.random.choice(self.n_tool_state, p=self.tp[self.tool_state])
+		self.tool_ob = np.random.choice(self.n_tool_state, p=self.ep[self.tool_state])
+
+		# One step prediciton
+		self.tool_belief = (self.tp * self.tool_belief.reshape(4, 1)).sum(axis=0)
+		# One step correction
+		self.tool_belief = self.tool_belief * self.ep[:, self.tool_ob]
+		self.tool_belief /= self.tool_belief.sum()
+
+
 
 		return self.current_product.existing_feature()
 
@@ -299,7 +326,7 @@ class GrindingHMM(Grinding):
 
 		existing_feature[self.stage] = np.random.normal(loc=loc, scale=scale)
 
-		processing_time = self.p5 / (v*a)
+		processing_time = self.p5_scale[self.tool_state] * self.p5 / (v*a)
 
 		return processing_time, existing_feature
 
@@ -323,6 +350,9 @@ class GrindingHMM(Grinding):
 		self.dress_time = self.time_to_dress
 		self.status = "dressing"
 		self.w = 1
+		self.tool_state = 0
+		self.tool_belief = np.zeros(self.n_tool_state)
+		self.tool_belief[0] = 1
 		self.passes = 0
 
 	def release(self):
@@ -347,8 +377,9 @@ class GrindingHMM(Grinding):
 		# Append machine random failure status
 		node_feature["w"] = self.w
 		# Append tool state observation
-		self.tool_ob = np.random.choice(self.n_tool_state, p=self.ep[self.tool_state])
+
 		node_feature["tool_ob"] = self.tool_ob
+		node_feature["tool_belief"] = self.tool_belief
 		node_feature["passes"] = self.passes
 
 		need_dress = self.status == "to dress"
@@ -358,19 +389,18 @@ class GrindingHMM(Grinding):
 	def get_feature_size(self):
 		return 7
 
-	def tool_check(self):
+	def tool_check(self, time_elapsed):
 		if self.fixed_dress_schedule and self.status == "to dress":
 			if self.passes >= self.pass_to_dress:
 				self.dress()
 			else:
 				self.status = "to load"
 
+		# if self.w == 0:
+		# 	self.tool_state = np.random.choice(self.n_tool_state, p=self.tp[self.tool_state])
 
-		if self.w == 0:
-			self.tool_state = np.random.choice(self.n_tool_state, p=self.tp[self.tool_state])
-
-		elif self.w == 1:
-			self.dress_time -= 1
+		if self.w == 1:
+			self.dress_time -= time_elapsed
 			if self.dress_time <= 0:
 				self.w = 0
 				self.status = "to load"
