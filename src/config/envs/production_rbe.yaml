@@ -1,4 +1,4 @@
-env: production_hmm
+env: production_rbe
 
 env_args:
   buffers:
