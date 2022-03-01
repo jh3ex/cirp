@@ -34,6 +34,8 @@ class production_rbe():
         self.yield_reward = self.args["yield_reward"]
         self.defect_reward = self.args["defect_reward"]
 
+        self.use_tool_belief = self.args["use_tool_belief"]
+
         self.template_product = Product(n_feature=self.args["n_feature"],
                                         n_process=self.args["n_stage"],
                                         index=0)
