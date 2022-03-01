@@ -3,7 +3,7 @@
 Created on Fri Sep 18 07:04:31 2020
 In this environment, machine tool follows hidden markov model.
 @author: jingh
-"""
+# """
 
 from envs.production_system.Buffer import Buffer, GrindingCB, IncomingBuffer
 from envs.production_system.Machine import GrindingRBE
@@ -475,6 +475,7 @@ if __name__ == "__main__":
             rand_action = np.random.rand(env.n_agents, env.n_actions)
             # print('At time [{}], available actions are {}'.format(env.time, env.get_avail_actions()))
             # print("state is {}".format(env.get_state()))
+            env.get_state()
             logits = rand_action * np.array(env.get_avail_actions())
             p = logits / np.sum(logits, axis=1, keepdims=True)
             rand_action = np.argmax(p, axis=1)

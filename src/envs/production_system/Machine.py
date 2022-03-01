@@ -379,7 +379,7 @@ class GrindingRBE(Grinding):
 		# Append tool state observation
 
 		node_feature["tool_ob"] = self.tool_ob
-		node_feature["tool_belief"] = self.tool_belief
+		node_feature["tool_belief"] = self.tool_belief.tolist()
 		node_feature["passes"] = self.passes
 
 		need_dress = self.status == "to dress"
