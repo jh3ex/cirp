@@ -5,14 +5,14 @@ In this environment, machine tool follows hidden markov model.
 @author: jingh
 # """
 
-from envs.production_system.Buffer import Buffer, GrindingCB, IncomingBuffer
-from envs.production_system.Machine import GrindingRBE
-from envs.production_system.Product import Product
+# from envs.production_system.Buffer import Buffer, GrindingCB, IncomingBuffer
+# from envs.production_system.Machine import GrindingRBE
+# from envs.production_system.Product import Product
 
 
-# from Buffer import Buffer, GrindingCB, IncomingBuffer
-# from Machine import GrindingRBE
-# from Product import Product
+from Buffer import Buffer, GrindingCB, IncomingBuffer
+from Machine import GrindingRBE
+from Product import Product
 
 import numpy as np
 from copy import deepcopy
@@ -291,7 +291,9 @@ class production_rbe():
 
         if self.args["obs_agent_id"]:
             size += 1
+		# Potential bug
 
+        size += 1
         return size
 
 
@@ -486,6 +488,9 @@ if __name__ == "__main__":
             r, terminated, info = env.step(rand_action)
             # print(r)
         print(info)
+
+
+
         y.append(info["yield"])
         o.append(info["output"])
         d.append(o[-1] - y[-1])
