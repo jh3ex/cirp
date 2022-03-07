@@ -380,14 +380,14 @@ class GrindingRBE(Grinding):
 
 		node_feature["tool_ob"] = self.tool_ob
 		node_feature["tool_belief"] = self.tool_belief.tolist()
-		node_feature["passes"] = self.passes
+		# node_feature["passes"] = self.passes
 
 		need_dress = self.status == "to dress"
 
 		return node_feature, need_decision, need_dress
 
 	def get_feature_size(self):
-		return 7
+		return 6
 
 	def tool_check(self, time_elapsed):
 		if self.fixed_dress_schedule and self.status == "to dress":

@@ -13,7 +13,7 @@ env_args:
 
   use_tool_belief: False
 
-  fixed_dress_schedule: False
+  fixed_dress_schedule: True
   n_tool_state: 4
 
   pass_to_dress: 10
@@ -161,7 +161,7 @@ env_args:
 
 
   sim_duration: 600
-  q_star: 0.000006
+  q_star: 0.000004
   yield_reward: 1
   defect_reward: -1
   actions:

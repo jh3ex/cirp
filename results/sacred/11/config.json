@@ -1,0 +1,646 @@
+{
+  "action_selector": "multinomial",
+  "adj": [
+    [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      1
+    ]
+  ],
+  "agent": "trans_ppo",
+  "agent_output_type": "pi_logits",
+  "batch_size": 8,
+  "batch_size_run": 8,
+  "buffer_cpu_only": true,
+  "buffer_size": 150,
+  "checkpoint_path": "",
+  "critic_lr": 0.0005,
+  "ent_coef": null,
+  "env": "production_rbe",
+  "env_args": {
+    "actions": {
+      "a": [
+        1.2e-05,
+        1.35e-05,
+        1.5e-05,
+        1.65e-05,
+        1.8e-05
+      ],
+      "v": [
+        0.3,
+        0.35,
+        0.4,
+        0.45,
+        0.5
+      ],
+      "w": [
+        30.0
+      ]
+    },
+    "buffers": {
+      "buffer_10_20": 10,
+      "buffer_20_30": 10,
+      "buffer_30_40": 10
+    },
+    "continuing_episode": false,
+    "defect_reward": -1,
+    "episode_limit": 10000,
+    "fixed_dress_schedule": true,
+    "last_action_one_hot": false,
+    "machine_name": "grinding_rbe",
+    "machines": {
+      "m10_1": {
+        "buffer_down": [
+          "buffer_10_20"
+        ],
+        "buffer_up": [
+          "incoming_buffer"
+        ],
+        "ep": [
+          [
+            0.7,
+            0.17,
+            0.12,
+            0.01
+          ],
+          [
+            0.1,
+            0.7,
+            0.16,
+            0.04
+          ],
+          [
+            0.25,
+            0.1,
+            0.6,
+            0.05
+          ],
+          [
+            0.22,
+            0.18,
+            0.05,
+            0.55
+          ]
+        ],
+        "p1": 0.9,
+        "p2": 1.4,
+        "p3": 0.5,
+        "p4": 2.0,
+        "p5": 5e-06,
+        "p5_scale": [
+          1.0,
+          1.2,
+          1.4,
+          2.1
+        ],
+        "p6": [
+          1.0,
+          0.99,
+          0.98,
+          0.96
+        ],
+        "stage": 0,
+        "time_to_dress": 3,
+        "tp": [
+          [
+            0.6,
+            0.27,
+            0.08,
+            0.05
+          ],
+          [
+            0.0,
+            0.65,
+            0.26,
+            0.09
+          ],
+          [
+            0.0,
+            0.0,
+            0.7,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "m20_1": {
+        "buffer_down": [
+          "buffer_20_30"
+        ],
+        "buffer_up": [
+          "buffer_10_20"
+        ],
+        "ep": [
+          [
+            0.7,
+            0.17,
+            0.12,
+            0.01
+          ],
+          [
+            0.1,
+            0.7,
+            0.16,
+            0.04
+          ],
+          [
+            0.25,
+            0.1,
+            0.6,
+            0.05
+          ],
+          [
+            0.22,
+            0.18,
+            0.05,
+            0.55
+          ]
+        ],
+        "p1": 0.85,
+        "p2": 1.35,
+        "p3": 0.5,
+        "p4": 2.0,
+        "p5": 1e-05,
+        "p5_scale": [
+          1.0,
+          1.2,
+          1.4,
+          2.1
+        ],
+        "p6": [
+          1.0,
+          0.99,
+          0.98,
+          0.96
+        ],
+        "stage": 1,
+        "time_to_dress": 3,
+        "tp": [
+          [
+            0.6,
+            0.27,
+            0.08,
+            0.05
+          ],
+          [
+            0.0,
+            0.65,
+            0.26,
+            0.09
+          ],
+          [
+            0.0,
+            0.0,
+            0.7,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "m20_2": {
+        "buffer_down": [
+          "buffer_20_30"
+        ],
+        "buffer_up": [
+          "buffer_10_20"
+        ],
+        "ep": [
+          [
+            0.7,
+            0.17,
+            0.12,
+            0.01
+          ],
+          [
+            0.1,
+            0.7,
+            0.16,
+            0.04
+          ],
+          [
+            0.25,
+            0.1,
+            0.6,
+            0.05
+          ],
+          [
+            0.22,
+            0.18,
+            0.05,
+            0.55
+          ]
+        ],
+        "p1": 0.85,
+        "p2": 1.35,
+        "p3": 0.5,
+        "p4": 2.0,
+        "p5": 1e-05,
+        "p5_scale": [
+          1.0,
+          1.2,
+          1.4,
+          2.1
+        ],
+        "p6": [
+          1.0,
+          0.99,
+          0.98,
+          0.96
+        ],
+        "stage": 1,
+        "time_to_dress": 3,
+        "tp": [
+          [
+            0.6,
+            0.27,
+            0.08,
+            0.05
+          ],
+          [
+            0.0,
+            0.65,
+            0.26,
+            0.09
+          ],
+          [
+            0.0,
+            0.0,
+            0.7,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "m30_1": {
+        "buffer_down": [
+          "buffer_30_40"
+        ],
+        "buffer_up": [
+          "buffer_20_30"
+        ],
+        "ep": [
+          [
+            0.7,
+            0.17,
+            0.12,
+            0.01
+          ],
+          [
+            0.1,
+            0.7,
+            0.16,
+            0.04
+          ],
+          [
+            0.25,
+            0.1,
+            0.6,
+            0.05
+          ],
+          [
+            0.22,
+            0.18,
+            0.05,
+            0.55
+          ]
+        ],
+        "p1": 0.9,
+        "p2": 1.5,
+        "p3": 0.5,
+        "p4": 2.0,
+        "p5": 7e-06,
+        "p5_scale": [
+          1.0,
+          1.2,
+          1.4,
+          2.1
+        ],
+        "p6": [
+          1.0,
+          0.99,
+          0.98,
+          0.96
+        ],
+        "stage": 2,
+        "time_to_dress": 3,
+        "tp": [
+          [
+            0.6,
+            0.27,
+            0.08,
+            0.05
+          ],
+          [
+            0.0,
+            0.65,
+            0.26,
+            0.09
+          ],
+          [
+            0.0,
+            0.0,
+            0.7,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "m40_1": {
+        "buffer_down": [
+          "completed_buffer"
+        ],
+        "buffer_up": [
+          "buffer_30_40"
+        ],
+        "ep": [
+          [
+            0.7,
+            0.17,
+            0.12,
+            0.01
+          ],
+          [
+            0.1,
+            0.7,
+            0.16,
+            0.04
+          ],
+          [
+            0.25,
+            0.1,
+            0.6,
+            0.05
+          ],
+          [
+            0.22,
+            0.18,
+            0.05,
+            0.55
+          ]
+        ],
+        "p1": 0.85,
+        "p2": 1.3,
+        "p3": 0.5,
+        "p4": 2.0,
+        "p5": 1e-05,
+        "p5_scale": [
+          1.0,
+          1.2,
+          1.4,
+          2.1
+        ],
+        "p6": [
+          1.0,
+          0.99,
+          0.98,
+          0.96
+        ],
+        "stage": 3,
+        "time_to_dress": 3,
+        "tp": [
+          [
+            0.6,
+            0.27,
+            0.08,
+            0.05
+          ],
+          [
+            0.0,
+            0.65,
+            0.26,
+            0.09
+          ],
+          [
+            0.0,
+            0.0,
+            0.7,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "m40_2": {
+        "buffer_down": [
+          "completed_buffer"
+        ],
+        "buffer_up": [
+          "buffer_30_40"
+        ],
+        "ep": [
+          [
+            0.7,
+            0.17,
+            0.12,
+            0.01
+          ],
+          [
+            0.1,
+            0.7,
+            0.16,
+            0.04
+          ],
+          [
+            0.25,
+            0.1,
+            0.6,
+            0.05
+          ],
+          [
+            0.22,
+            0.18,
+            0.05,
+            0.55
+          ]
+        ],
+        "p1": 0.85,
+        "p2": 1.3,
+        "p3": 0.5,
+        "p4": 2.0,
+        "p5": 1e-05,
+        "p5_scale": [
+          1.0,
+          1.2,
+          1.4,
+          2.1
+        ],
+        "p6": [
+          1.0,
+          0.99,
+          0.98,
+          0.96
+        ],
+        "stage": 3,
+        "time_to_dress": 3,
+        "tp": [
+          [
+            0.6,
+            0.27,
+            0.08,
+            0.05
+          ],
+          [
+            0.0,
+            0.65,
+            0.26,
+            0.09
+          ],
+          [
+            0.0,
+            0.0,
+            0.7,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    },
+    "n_feature": 4,
+    "n_stage": 4,
+    "n_tool_state": 4,
+    "obs_agent_id": true,
+    "obs_instead_of_state": true,
+    "obs_last_action": true,
+    "obs_scale": {
+      "actions": [
+        2.0,
+        0.3,
+        55000
+      ],
+      "b_down": 0.1,
+      "b_up": 0.1,
+      "passes": 0.1,
+      "product_feature": 100000,
+      "remaining_time": 0.2,
+      "stage": 1,
+      "w": 1
+    },
+    "pass_to_dress": 10,
+    "q_star": 4e-06,
+    "reward_scale": true,
+    "reward_scale_rate": 0.2,
+    "sim_duration": 600,
+    "stepsize": 0.1,
+    "use_tool_belief": false,
+    "yield_reward": 1
+  },
+  "epsilon_anneal_time": 100000,
+  "epsilon_finish": 0.01,
+  "epsilon_start": 0.5,
+  "evaluate": false,
+  "gamma": 0.99,
+  "grad_norm_clip": 10,
+  "hypernet_embed": 64,
+  "hypernet_layers": 2,
+  "label": "default_label",
+  "lam": 0.95,
+  "learner": "policy_gradient_v2",
+  "learner_log_interval": 10000,
+  "load_step": 0,
+  "local_results_path": "results",
+  "log_interval": 10000,
+  "lr": 0.0005,
+  "mac": "ppo_mac",
+  "mask_before_softmax": false,
+  "mixer": "qmix",
+  "mixing_embed_dim": 32,
+  "n_agents": 6,
+  "n_head": 4,
+  "name": "trans_vmix_pg_a2c",
+  "num_blocks": 6,
+  "obs_agent_id": true,
+  "obs_last_action": true,
+  "optim_alpha": 0.99,
+  "optim_eps": 1e-05,
+  "q_nstep": 0,
+  "repeat_id": 1,
+  "residue": false,
+  "rnn_hidden_dim": 64,
+  "runner": "parallel",
+  "runner_log_interval": 10000,
+  "save_model": true,
+  "save_model_interval": 200000,
+  "save_replay": false,
+  "seed": 1234,
+  "t_max": 10000000,
+  "target_update_interval": 200,
+  "td_lambda": 0.8,
+  "test_greedy": false,
+  "test_interval": 10000,
+  "test_nepisode": 96,
+  "use_cuda": true,
+  "use_tensorboard": false,
+  "vf_coef": 0.1
+}

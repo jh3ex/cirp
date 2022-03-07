@@ -239,6 +239,9 @@ class production_rbe():
             tool_ob_one_hot = [0] * self.args["n_tool_state"]
             tool_ob_one_hot[node_feature["tool_ob"]] = 1
             node_feature["tool_ob"] = tool_ob_one_hot
+            del node_feature["tool_belief"]
+        else:
+            del node_feature["tool_ob"]
 
         for key, value in node_feature.items():
             scale = self.args["obs_scale"].get(key, 1)
@@ -293,7 +296,7 @@ class production_rbe():
             size += 1
 		# Potential bug
 
-        size += 1
+        # size += 1
         return size
 
 

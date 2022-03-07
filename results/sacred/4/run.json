@@ -1,0 +1,104 @@
+{
+  "artifacts": [],
+  "command": "my_main",
+  "experiment": {
+    "base_dir": "/home/jh3ex/Script/cirp/src",
+    "dependencies": [
+      "munch==2.5.0",
+      "numpy==1.17.4",
+      "sacred==0.8.2",
+      "torch==1.9.1"
+    ],
+    "mainfile": "main.py",
+    "name": "pymarl",
+    "repositories": [
+      {
+        "commit": "3c111a367e9f3bf34708d9395e8c16317dd90f12",
+        "dirty": true,
+        "url": "https://github.com/jh3ex/cirp"
+      },
+      {
+        "commit": "3c111a367e9f3bf34708d9395e8c16317dd90f12",
+        "dirty": true,
+        "url": "https://github.com/jh3ex/cirp"
+      },
+      {
+        "commit": "3c111a367e9f3bf34708d9395e8c16317dd90f12",
+        "dirty": true,
+        "url": "https://github.com/jh3ex/cirp"
+      }
+    ],
+    "sources": [
+      [
+        "main.py",
+        "_sources/main_a4d6b1e5c044098425d3b83153feb6c6.py"
+      ],
+      [
+        "run.py",
+        "_sources/run_f892aa255f74524bfa0dbdd18ee59d51.py"
+      ],
+      [
+        "utils/logging.py",
+        "_sources/logging_aa14e56e60b01dd7a9ddb8e6cdf36b85.py"
+      ]
+    ]
+  },
+  "heartbeat": "2022-03-01T13:19:16.597185",
+  "host": {
+    "ENV": {},
+    "cpu": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+    "gpus": {
+      "driver_version": "470.103.01",
+      "gpus": [
+        {
+          "model": "NVIDIA GeForce RTX 3090",
+          "persistence_mode": false,
+          "total_memory": 24265
+        },
+        {
+          "model": "NVIDIA GeForce RTX 3090",
+          "persistence_mode": false,
+          "total_memory": 24268
+        }
+      ]
+    },
+    "hostname": "lambda1",
+    "os": [
+      "Linux",
+      "Linux-5.13.0-30-generic-x86_64-with-glibc2.29"
+    ],
+    "python_version": "3.8.10"
+  },
+  "meta": {
+    "command": "my_main",
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false,
+      "COMMAND": null,
+      "UPDATE": [],
+      "help": false,
+      "with": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2022-03-01T03:48:34.295421",
+  "status": "RUNNING"
+}
