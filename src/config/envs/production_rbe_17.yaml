@@ -161,8 +161,8 @@ env_args:
 
 
   sim_duration: 600
-  q_star: 0.000004
-  yield_reward: 0
+  q_star: 0.000008
+  yield_reward: 1
   defect_reward: -1
   actions:
     v: [0.3, 0.35, 0.4, 0.45, 0.5]
